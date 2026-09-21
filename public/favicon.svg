@@ -1,0 +1,30 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CIBO">
+  <defs>
+    <linearGradient id="favC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A28"/>
+      <stop offset="1" stop-color="#010703"/>
+    </linearGradient>
+    <linearGradient id="favGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFC98A"/>
+      <stop offset="1" stop-color="#DFAF66"/>
+    </linearGradient>
+    <linearGradient id="favOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2A94A"/>
+      <stop offset="1" stop-color="#E48F24"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#F8E0B5"/>
+  <g transform="translate(32 38)">
+    <path d="M-15 11 Q-15 -4 0 -7 Q15 -4 15 11 Z" fill="url(#favGold)" stroke="#182E20" stroke-width="1.4"/>
+    <rect x="-16" y="10" width="32" height="3" rx="1.5" fill="url(#favOrange)" stroke="#182E20" stroke-width="1.2"/>
+    <circle cx="0" cy="-9" r="2.5" fill="url(#favOrange)" stroke="#182E20" stroke-width="1.2"/>
+  </g>
+  <path d="M46 28 Q46 12 30 12 Q14 12 14 28 Q14 38 24 42 Q30 43 36 41" stroke="url(#favC)" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <g transform="translate(30 8)">
+    <rect x="-6" y="2" width="12" height="3" rx="1" fill="#FFFDF6" stroke="#182E20" stroke-width="1"/>
+    <path d="M-6 2 Q-7 -3 -3 -4 Q-3 -7 0 -5 Q1 -8 3 -6 Q6 -7 6 -3 Q8 -2 6 2 Z" fill="#FFFDF6" stroke="#182E20" stroke-width="1"/>
+  </g>
+  <circle cx="31" cy="24" r="1.4" fill="#F9EFDB"/>
+  <path d="M35 24 q1.5 1.2 3 0" stroke="#F9EFDB" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M31 28 q3 3 6 0" stroke="#F9EFDB" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+</svg>

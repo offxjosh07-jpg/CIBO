@@ -1,0 +1,62 @@
+<svg width="520" height="160" viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CIBO">
+  <defs>
+    <linearGradient id="wmBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8E0B5"/>
+      <stop offset="1" stop-color="#F9EFDB"/>
+    </linearGradient>
+    <linearGradient id="wmC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A28"/>
+      <stop offset="1" stop-color="#010703"/>
+    </linearGradient>
+    <linearGradient id="wmGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFC98A"/>
+      <stop offset="1" stop-color="#DFAF66"/>
+    </linearGradient>
+    <linearGradient id="wmOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2A94A"/>
+      <stop offset="1" stop-color="#E48F24"/>
+    </linearGradient>
+    <radialGradient id="wmCheek" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#E48F24" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E48F24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Badge -->
+  <rect x="8" y="14" width="132" height="132" rx="36" fill="url(#wmBg)"/>
+  <rect x="8" y="14" width="132" height="132" rx="36" fill="none" stroke="#182E20" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Cloche -->
+  <g transform="translate(74 92)">
+    <ellipse cx="0" cy="16" rx="34" ry="5.5" fill="#182E20" opacity="0.10"/>
+    <path d="M-27 12 Q-27 -5 0 -9 Q27 -5 27 12 Z" fill="url(#wmGold)"/>
+    <path d="M-27 12 Q-27 -5 0 -9 Q27 -5 27 12 Z" fill="none" stroke="#182E20" stroke-width="1.6"/>
+    <rect x="-28" y="11" width="56" height="5" rx="2.5" fill="url(#wmOrange)"/>
+    <rect x="-28" y="11" width="56" height="5" rx="2.5" fill="none" stroke="#182E20" stroke-width="1.6"/>
+    <circle cx="0" cy="-11" r="4" fill="url(#wmOrange)" stroke="#182E20" stroke-width="1.6"/>
+  </g>
+
+  <!-- C mascot -->
+  <path d="M104 56 Q104 20 68 20 Q32 20 32 56 Q32 82 56 90 Q68 92 80 88" stroke="url(#wmC)" stroke-width="18" stroke-linecap="round" fill="none"/>
+  <!-- Chef hat -->
+  <g transform="translate(68 12)">
+    <rect x="-13" y="5" width="26" height="6" rx="2" fill="#FFFDF6" stroke="#182E20" stroke-width="1.4"/>
+    <path d="M-13 5 Q-15 -5 -8 -7 Q-7 -13 -1 -11 Q0 -17 5 -13 Q11 -14 11 -7 Q17 -5 13 5 Z" fill="#FFFDF6" stroke="#182E20" stroke-width="1.4" stroke-linejoin="round"/>
+  </g>
+  <!-- face -->
+  <circle cx="72" cy="51" r="2.6" fill="#F9EFDB"/>
+  <circle cx="72.6" cy="51.6" r="1.5" fill="#010703"/>
+  <path d="M82 51 q3 2.5 6 0" stroke="#F9EFDB" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <circle cx="86" cy="60" r="5.5" fill="url(#wmCheek)"/>
+  <path d="M73 60 q5 5 10 1" stroke="#F9EFDB" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- thumb -->
+  <g transform="translate(92 84)">
+    <path d="M0 0 Q-2 -5 2 -9 Q7 -10 8 -5 L8 2 Q8 6 4 6 L-2 6 Q-5 6 -5 3 L-5 -1 Q-5 -3 -2 -3 Z" fill="url(#wmOrange)" stroke="#182E20" stroke-width="1.4"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="160" y="92" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" fill="#182E20" letter-spacing="4">CIBO</text>
+  <text x="162" y="118" font-family="Georgia, serif" font-size="13" font-weight="600" fill="#6E7453" letter-spacing="6">GOOD FOOD · BRIGHTER TOMORROW</text>
+  <line x1="162" y1="128" x2="500" y2="128" stroke="#DFAF66" stroke-width="2"/>
+  <text x="162" y="144" font-family="Georgia, serif" font-size="11" font-weight="600" fill="#E48F24" letter-spacing="8">RESCUE · SHARE · REDUCE</text>
+</svg>

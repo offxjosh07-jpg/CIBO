@@ -1,0 +1,400 @@
+// CIBO — Hyperlocal Surplus Food Rescue Marketplace
+// Prisma schema (SQLite — sandbox environment)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------- Users & Auth -----------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  phone        String?  @unique
+  name         String
+  passwordHash String
+  // role: CUSTOMER | PROVIDER | ADMIN | SUPPORT
+  role         String   @default("CUSTOMER")
+  avatarUrl    String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  customerProfile CustomerProfile?
+  providerProfile ProviderProfile?
+  orders          Order[]         @relation("CustomerOrders")
+  addresses       Address[]
+  favorites       Favorite[]
+  notifications   Notification[]
+  reviews         Review[]
+  complaints      Complaint[]     @relation("CustomerComplaints")
+  adminActions    AdminAction[]   @relation("AdminActions")
+  sessions        Session[]
+
+  @@index([role])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ----------------------------- Profiles -----------------------------
+
+model CustomerProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  // dietary: VEGETARIAN | NON_VEGETARIAN | EGGETARIAN | VEGAN | JAIN
+  dietaryPreference String   @default("NON_VEGETARIAN")
+  // halal: ONLY_HALAL | INCLUDE_NON_HALAL | NO_PREFERENCE
+  halalPreference   String   @default("NO_PREFERENCE")
+  savedCategories   String   @default("[]") // JSON array of category slugs
+  totalOrders       Int      @default(0)
+  totalSpent        Float    @default(0)
+  mealsRescued      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProviderProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  businessName       String
+  ownerName          String
+  businessType       String   // WEDDING_CATERER | RESTAURANT | BAKERY | HOTEL | CLOUD_KITCHEN | CANTEEN | EVENT_ORGANIZER | OTHER
+  phone              String
+  email              String
+  addressLine        String
+  city               String
+  state              String
+  pincode            String
+  latitude           Float    @default(8.7139)
+  longitude          Float    @default(77.7567)
+  // verification: PENDING | UNDER_REVIEW | VERIFIED | REJECTED | SUSPENDED
+  verificationStatus String   @default("PENDING")
+  licenseNumber      String?
+  licenseType        String?
+  bankName           String?
+  bankAccount        String?
+  bankIfsc           String?
+  upiId              String?
+  rating             Float    @default(0)
+  totalRatings       Int      @default(0)
+  totalOrders        Int      @default(0)
+  totalRevenue       Float    @default(0)
+  mealsRescued       Int      @default(0)
+  wasteAvoidedKg     Float    @default(0)
+  // fulfillment: PICKUP_ONLY | PICKUP_AND_DELIVERY
+  fulfillment        String   @default("PICKUP_ONLY")
+  deliveryFee        Float    @default(0)
+  bio                String?
+  logoUrl            String?
+  coverUrl           String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents          ProviderDocument[]
+  listings           FoodListing[]
+  orders             Order[]         @relation("ProviderOrders")
+  reviews            Review[]
+  complaints         Complaint[]     @relation("ProviderComplaints")
+
+  @@index([city])
+  @@index([verificationStatus])
+}
+
+model ProviderDocument {
+  id          String   @id @default(cuid())
+  providerId  String
+  type        String   // LICENSE | ID_PROOF | BANK_PROOF | GST | FSSAI
+  url         String
+  status      String   @default("PENDING") // PENDING | VERIFIED | REJECTED
+  createdAt   DateTime @default(now())
+  provider    ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
+}
+
+// ----------------------------- Catalog -----------------------------
+
+model FoodCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  emoji     String
+  // foodType: VEG | NON_VEG | BOTH
+  foodType  String   @default("BOTH")
+  icon      String?
+  sortOrder Int      @default(0)
+  listings  FoodListing[]
+
+  @@index([slug])
+}
+
+model FoodListing {
+  id                 String   @id @default(cuid())
+  providerId         String
+  categoryId         String?
+  title              String
+  description        String
+  images             String   @default("[]") // JSON array of URLs
+  // foodType: VEG | NON_VEG | EGG | VEGAN | JAIN
+  foodType           String   @default("VEG")
+  // halalStatus: VERIFIED | DECLARED | UNSPECIFIED
+  halalStatus        String   @default("UNSPECIFIED")
+  quantity           Int
+  originalPrice      Float
+  ciboPrice          Float
+  prepTime           String?
+  packingTime        String?
+  pickupStart        DateTime
+  pickupDeadline     DateTime
+  addressLine        String
+  city               String
+  latitude           Float    @default(8.7139)
+  longitude          Float    @default(77.7567)
+  distanceKm         Float    @default(0)
+  allergens          String   @default("[]") // JSON
+  storageInfo        String?
+  packagingInfo      String?
+  specialInstructions String?
+  // isEvent + event fields
+  isEvent            Boolean  @default(false)
+  eventType          String?  // WEDDING | BIRTHDAY | COLLEGE | CORPORATE | FUNCTION | CATERING
+  eventName          String?
+  // fulfillment: PICKUP | DELIVERY | BOTH
+  fulfillment        String   @default("PICKUP")
+  deliveryFee        Float    @default(0)
+  // status: DRAFT | ACTIVE | SOLD_OUT | EXPIRED | TAKEN_DOWN
+  status             String   @default("ACTIVE")
+  initialQuantity    Int
+  views              Int      @default(0)
+  rescues            Int      @default(0)
+  rating             Float    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  provider           ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category           FoodCategory?   @relation(fields: [categoryId], references: [id])
+  orderItems         OrderItem[]
+  favorites          Favorite[]
+  safetyReports      FoodSafetyReport[]
+  complaints         Complaint[]     @relation("ListingComplaints")
+
+  @@index([providerId])
+  @@index([city])
+  @@index([status])
+  @@index([isEvent])
+  @@index([foodType])
+}
+
+model FoodSafetyReport {
+  id                    String   @id @default(cuid())
+  listingId             String
+  providerId            String
+  prepTime              String?
+  packingTime           String?
+  storageInfo           String?
+  packagingStatus       String?
+  handlingDeclaration   String?
+  allergenInfo          String?
+  safetyDeclaration     Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  listing               FoodListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+}
+
+// ----------------------------- Orders -----------------------------
+
+model Order {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  customerId      String
+  providerId      String
+  // status: PLACED | CONFIRMED | READY | PICKED_UP | COMPLETED | CANCELLED | REFUNDED
+  // delivery: SEARCHING_RIDER | RIDER_ASSIGNED | PICKED_UP | ON_THE_WAY | DELIVERED
+  status          String   @default("PLACED")
+  subtotal        Float
+  platformFee     Float    @default(0)
+  deliveryFee     Float    @default(0)
+  tax             Float    @default(0)
+  discount        Float    @default(0)
+  total           Float
+  // payment
+  paymentMethod   String   @default("UPI") // UPI | CARD | NETBANKING | WALLET
+  paymentStatus   String   @default("PENDING") // PENDING | PAID | REFUNDED | FAILED
+  paymentRef      String?
+  // fulfillment
+  fulfillmentType String   @default("PICKUP") // PICKUP | DELIVERY
+  pickupOtp       String?
+  pickupStart     DateTime?
+  pickupDeadline  DateTime?
+  deliveryAddress String?
+  deliveryLat     Float?
+  deliveryLng     Float?
+  notes           String?
+  cancelledReason String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  completedAt     DateTime?
+
+  customer        User     @relation("CustomerOrders", fields: [customerId], references: [id])
+  provider        ProviderProfile @relation("ProviderOrders", fields: [providerId], references: [id])
+  items           OrderItem[]
+  payment         Payment?
+  review          Review?
+  complaints      Complaint[]
+
+  @@index([customerId])
+  @@index([providerId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  listingId   String?
+  title       String
+  image       String?
+  price       Float
+  quantity    Int
+  providerId  String
+  orderIdSnapshot String
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listing     FoodListing? @relation(fields: [listingId], references: [id])
+
+  @@index([orderId])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  orderId     String   @unique
+  amount      Float
+  method      String
+  status      String   @default("PENDING")
+  txnId       String?
+  gateway     String   @default("MOCK")
+  createdAt   DateTime @default(now())
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// ----------------------------- Address -----------------------------
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  label     String   @default("Home")
+  line1     String
+  line2     String?
+  city      String
+  state     String?
+  pincode   String?
+  latitude  Float    @default(8.7139)
+  longitude Float    @default(77.7567)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ----------------------------- Engagement -----------------------------
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  listingId  String?
+  providerId String?
+  type       String   @default("LISTING") // LISTING | PROVIDER | CATEGORY
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing    FoodListing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@unique([userId, listingId])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  providerId String
+  orderId    String   @unique
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
+}
+
+model Complaint {
+  id          String   @id @default(cuid())
+  userId      String
+  orderId     String?
+  providerId  String?
+  listingId   String?
+  type        String   // FOOD_QUALITY | MISSING_ITEM | WRONG_QUANTITY | LATE_PICKUP | FOOD_SAFETY | PROVIDER_BEHAVIOR | PAYMENT | OTHER
+  description String
+  evidence    String   @default("[]") // JSON
+  status      String   @default("OPEN") // OPEN | INVESTIGATING | RESOLVED | REJECTED
+  resolution  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation("CustomerComplaints", fields: [userId], references: [id], onDelete: Cascade)
+  provider    ProviderProfile? @relation("ProviderComplaints", fields: [providerId], references: [id])
+  order       Order?   @relation(fields: [orderId], references: [id])
+  listing     FoodListing? @relation("ListingComplaints", fields: [listingId], references: [id])
+
+  @@index([status])
+  @@index([providerId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // NEARBY_FOOD | ORDER_CONFIRMED | PICKUP_REMINDER | LISTING_ENDING | ORDER_READY | PAYMENT_CONFIRMED | REFUND | VERIFICATION | COMPLAINT_UPDATE
+  title     String
+  body      String
+  data      String   @default("{}") // JSON
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+// ----------------------------- Admin -----------------------------
+
+model AdminAction {
+  id         String   @id @default(cuid())
+  adminId    String
+  targetType String   // USER | PROVIDER | LISTING | ORDER | COMPLAINT
+  targetId   String
+  action     String   // VERIFY | SUSPEND | REINSTATE | TAKEDOWN | RESOLVE | REJECT
+  reason     String?
+  createdAt  DateTime @default(now())
+  admin      User     @relation("AdminActions", fields: [adminId], references: [id])
+
+  @@index([targetType, targetId])
+}
+
+model PlatformSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

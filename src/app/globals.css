@@ -1,0 +1,256 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* CIBO brand tokens */
+  --color-forest: var(--forest);
+  --color-forest-deep: var(--forest-deep);
+  --color-cream: var(--cream);
+  --color-ivory: var(--ivory);
+  --color-gold: var(--gold);
+  --color-orange: var(--orange);
+  --color-olive: var(--olive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 18px);
+}
+
+:root {
+  /* CIBO brand palette */
+  --forest: #182E20;
+  --forest-deep: #010703;
+  --cream: #F8E0B5;
+  --ivory: #F9EFDB;
+  --gold: #DFAF66;
+  --orange: #E48F24;
+  --olive: #696C4D;
+
+  --success: #2F7A4A;
+  --warning: #C77C1B;
+  --danger: #B23A2E;
+
+  --radius: 0.875rem;
+  --background: #FBF6EA;
+  --foreground: #182E20;
+  --card: #FFFDF6;
+  --card-foreground: #182E20;
+  --popover: #FFFDF6;
+  --popover-foreground: #182E20;
+  --primary: #182E20;
+  --primary-foreground: #F9EFDB;
+  --secondary: #F1E6C9;
+  --secondary-foreground: #182E20;
+  --muted: #F1E6C9;
+  --muted-foreground: #6E7453;
+  --accent: #E48F24;
+  --accent-foreground: #FFFDF6;
+  --destructive: #B23A2E;
+  --border: #E6D8B4;
+  --input: #EFE4C4;
+  --ring: #DFAF66;
+  --chart-1: #E48F24;
+  --chart-2: #2F7A4A;
+  --chart-3: #DFAF66;
+  --chart-4: #696C4D;
+  --chart-5: #B23A2E;
+  --sidebar: #FFFDF6;
+  --sidebar-foreground: #182E20;
+  --sidebar-primary: #182E20;
+  --sidebar-primary-foreground: #F9EFDB;
+  --sidebar-accent: #F1E6C9;
+  --sidebar-accent-foreground: #182E20;
+  --sidebar-border: #E6D8B4;
+  --sidebar-ring: #DFAF66;
+}
+
+.dark {
+  --forest: #1E3A28;
+  --forest-deep: #0A120C;
+  --cream: #E8C98A;
+  --ivory: #2A2415;
+  --gold: #E2B878;
+  --orange: #EFA53C;
+  --olive: #8A8D63;
+
+  --background: #0C140E;
+  --foreground: #F9EFDB;
+  --card: #131E14;
+  --card-foreground: #F9EFDB;
+  --popover: #131E14;
+  --popover-foreground: #F9EFDB;
+  --primary: #F9EFDB;
+  --primary-foreground: #182E20;
+  --secondary: #1E2A1E;
+  --secondary-foreground: #F9EFDB;
+  --muted: #1E2A1E;
+  --muted-foreground: #A9AE85;
+  --accent: #E48F24;
+  --accent-foreground: #FFFDF6;
+  --destructive: #D85447;
+  --border: #2A3A2A;
+  --input: #2A3A2A;
+  --ring: #DFAF66;
+  --chart-1: #EFA53C;
+  --chart-2: #4FA468;
+  --chart-3: #E2B878;
+  --chart-4: #8A8D63;
+  --chart-5: #D85447;
+  --sidebar: #0F1810;
+  --sidebar-foreground: #F9EFDB;
+  --sidebar-primary: #F9EFDB;
+  --sidebar-primary-foreground: #182E20;
+  --sidebar-accent: #1E2A1E;
+  --sidebar-accent-foreground: #F9EFDB;
+  --sidebar-border: #2A3A2A;
+  --sidebar-ring: #DFAF66;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv01";
+  }
+  ::selection {
+    background: var(--gold);
+    color: var(--forest-deep);
+  }
+}
+
+/* CIBO utility classes */
+@layer utilities {
+  .bg-forest { background-color: var(--forest); }
+  .bg-forest-deep { background-color: var(--forest-deep); }
+  .bg-cream { background-color: var(--cream); }
+  .bg-ivory { background-color: var(--ivory); }
+  .bg-gold { background-color: var(--gold); }
+  .bg-orange { background-color: var(--orange); }
+  .bg-olive { background-color: var(--olive); }
+  .text-forest { color: var(--forest); }
+  .text-forest-deep { color: var(--forest-deep); }
+  .text-cream { color: var(--cream); }
+  .text-ivory { color: var(--ivory); }
+  .text-gold { color: var(--gold); }
+  .text-orange { color: var(--orange); }
+  .text-olive { color: var(--olive); }
+  .border-forest { border-color: var(--forest); }
+  .border-gold { border-color: var(--gold); }
+  .border-orange { border-color: var(--orange); }
+  .ring-gold { --tw-ring-color: var(--gold); }
+
+  .cibo-shadow {
+    box-shadow: 0 1px 2px rgba(24,46,32,0.04), 0 8px 24px -12px rgba(24,46,32,0.18);
+  }
+  .cibo-shadow-lg {
+    box-shadow: 0 2px 6px rgba(24,46,32,0.06), 0 24px 48px -20px rgba(24,46,32,0.28);
+  }
+  .cibo-shadow-gold {
+    box-shadow: 0 8px 24px -10px rgba(228,143,36,0.45);
+  }
+  .cibo-grain {
+    background-image: radial-gradient(rgba(24,46,32,0.035) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+  .cibo-hero-glow {
+    background: radial-gradient(60% 60% at 30% 20%, rgba(223,175,102,0.28), transparent 70%),
+                radial-gradient(50% 50% at 80% 30%, rgba(228,143,36,0.20), transparent 70%);
+  }
+  .scrollbar-cibo {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) transparent;
+  }
+  .scrollbar-cibo::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-cibo::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 8px; }
+  .scrollbar-cibo::-webkit-scrollbar-track { background: transparent; }
+}
+
+/* Marquee */
+@keyframes cibo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: cibo-marquee 30s linear infinite; }
+
+@keyframes cibo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float { animation: cibo-float 5s ease-in-out infinite; }
+
+@keyframes cibo-pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  70% { transform: scale(1.6); opacity: 0; }
+  100% { opacity: 0; }
+}
+.animate-pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: cibo-pulse-ring 2s cubic-bezier(0.2,0.6,0.3,1) infinite;
+}
+
+@keyframes cibo-shimmer {
+  100% { transform: translateX(100%); }
+}
+.cibo-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+}
+.cibo-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,253,246,0.6), transparent);
+  animation: cibo-shimmer 1.6s infinite;
+}

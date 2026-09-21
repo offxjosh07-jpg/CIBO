@@ -1,0 +1,71 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CIBO logo">
+  <defs>
+    <linearGradient id="ciboBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8E0B5"/>
+      <stop offset="1" stop-color="#F9EFDB"/>
+    </linearGradient>
+    <linearGradient id="ciboC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A28"/>
+      <stop offset="1" stop-color="#010703"/>
+    </linearGradient>
+    <linearGradient id="ciboGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFC98A"/>
+      <stop offset="1" stop-color="#DFAF66"/>
+    </linearGradient>
+    <linearGradient id="ciboOrange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2A94A"/>
+      <stop offset="1" stop-color="#E48F24"/>
+    </linearGradient>
+    <radialGradient id="ciboCheek" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#E48F24" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#E48F24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rounded cream badge -->
+  <rect x="6" y="6" width="228" height="228" rx="60" fill="url(#ciboBg)"/>
+  <rect x="6" y="6" width="228" height="228" rx="60" fill="none" stroke="#182E20" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Serving cloche (under C) -->
+  <g transform="translate(120 150)">
+    <ellipse cx="0" cy="26" rx="58" ry="9" fill="#182E20" opacity="0.10"/>
+    <path d="M-46 20 Q-46 -8 0 -14 Q46 -8 46 20 Z" fill="url(#ciboGold)"/>
+    <path d="M-46 20 Q-46 -8 0 -14 Q46 -8 46 20 Z" fill="none" stroke="#182E20" stroke-width="2.2"/>
+    <rect x="-48" y="18" width="96" height="7" rx="3.5" fill="url(#ciboOrange)"/>
+    <rect x="-48" y="18" width="96" height="7" rx="3.5" fill="none" stroke="#182E20" stroke-width="2.2"/>
+    <circle cx="0" cy="-18" r="6.5" fill="url(#ciboOrange)" stroke="#182E20" stroke-width="2.2"/>
+    <!-- steam -->
+    <path d="M-12 -26 q4 -6 0 -12" stroke="#182E20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M0 -28 q4 -6 0 -12" stroke="#182E20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+    <path d="M12 -26 q4 -6 0 -12" stroke="#182E20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- C mascot body -->
+  <path d="M170 96 Q170 36 110 36 Q50 36 50 96 Q50 138 92 150 Q110 154 128 150" stroke="url(#ciboC)" stroke-width="30" stroke-linecap="round" fill="none"/>
+  <path d="M170 96 Q170 36 110 36 Q50 36 50 96 Q50 138 92 150 Q110 154 128 150" stroke="#0A120C" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.35"/>
+
+  <!-- Chef hat on top of C -->
+  <g transform="translate(110 22)">
+    <rect x="-22" y="8" width="44" height="10" rx="3" fill="#FFFDF6" stroke="#182E20" stroke-width="2"/>
+    <path d="M-22 8 Q-26 -8 -14 -12 Q-12 -22 -2 -18 Q0 -28 8 -22 Q18 -24 18 -12 Q28 -8 22 8 Z" fill="#FFFDF6" stroke="#182E20" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="-8" cy="-6" r="2.2" fill="#E48F24"/>
+    <circle cx="6" cy="-10" r="2.2" fill="#DFAF66"/>
+  </g>
+
+  <!-- Face on C (right side, around x=128 y=96) -->
+  <!-- open eye (left) -->
+  <circle cx="116" cy="86" r="4.2" fill="#F9EFDB"/>
+  <circle cx="117" cy="87" r="2.4" fill="#010703"/>
+  <!-- winking eye (right) -->
+  <path d="M132 86 q5 4 10 0" stroke="#F9EFDB" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- cheek -->
+  <circle cx="142" cy="100" r="9" fill="url(#ciboCheek)"/>
+  <!-- smile -->
+  <path d="M118 104 q8 8 16 2" stroke="#F9EFDB" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Thumbs up (bottom right, on the C tail) -->
+  <g transform="translate(150 140)">
+    <path d="M0 0 Q-4 -8 2 -14 Q10 -16 12 -8 L12 4 Q12 10 6 10 L-4 10 Q-8 10 -8 6 L-8 -2 Q-8 -4 -4 -4 Z" fill="url(#ciboOrange)" stroke="#182E20" stroke-width="2"/>
+    <path d="M-8 0 q-8 2 -8 8 q0 6 8 6" fill="none" stroke="#182E20" stroke-width="2"/>
+  </g>
+</svg>
