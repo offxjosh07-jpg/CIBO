@@ -125,6 +125,8 @@ export function StatCard({
   icon,
   tone = "forest",
   sub,
+  spark,
+  sparkColor,
 }: {
   label: string;
   value: ReactNode;
@@ -132,6 +134,8 @@ export function StatCard({
   icon: ReactNode;
   tone?: "forest" | "orange" | "gold" | "olive" | "success";
   sub?: string;
+  spark?: number[];
+  sparkColor?: string;
 }) {
   const toneCls: Record<string, string> = {
     forest: "bg-forest text-ivory",
@@ -139,6 +143,13 @@ export function StatCard({
     gold: "bg-gold text-forest-deep",
     olive: "bg-olive text-ivory",
     success: "bg-success text-white",
+  };
+  const sparkColorMap: Record<string, string> = {
+    forest: "#182E20",
+    orange: "#E48F24",
+    gold: "#DFAF66",
+    olive: "#696C4D",
+    success: "#2F7A4A",
   };
   const up = (delta ?? 0) >= 0;
   return (
@@ -162,20 +173,24 @@ export function StatCard({
           {icon}
         </div>
       </div>
-      {delta !== undefined && (
-        <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-cream/60 px-2 py-0.5 text-[10px] font-bold">
-          {up ? (
-            <TrendingUp className="size-3 text-success" />
-          ) : (
-            <TrendingDown className="size-3 text-danger" />
-          )}
-          <span className={up ? "text-success" : "text-danger"}>
-            {up ? "+" : ""}
-            {delta}%
-          </span>
-          <span className="text-muted-foreground">vs last week</span>
-        </div>
-      )}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        {delta !== undefined && (
+          <div className="inline-flex items-center gap-1 rounded-full bg-cream/60 px-2 py-0.5 text-[10px] font-bold">
+            {up ? (
+              <TrendingUp className="size-3 text-success" />
+            ) : (
+              <TrendingDown className="size-3 text-danger" />
+            )}
+            <span className={up ? "text-success" : "text-danger"}>
+              {up ? "+" : ""}
+              {delta}%
+            </span>
+          </div>
+        )}
+        {spark && spark.length > 1 && (
+          <Sparkline data={spark} color={sparkColor || sparkColorMap[tone]} />
+        )}
+      </div>
     </div>
   );
 }
@@ -314,5 +329,58 @@ export function VerificationPill({
       <span className={cn("size-1.5 rounded-full", m.dot)} />
       {m.label}
     </span>
+  );
+}
+
+// Sparkline mini-chart for stat cards
+export function Sparkline({
+  data,
+  color = "#E48F24",
+  className,
+}: {
+  data: number[];
+  color?: string;
+  className?: string;
+}) {
+  if (!data || data.length === 0) return null;
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const range = max - min || 1;
+  const w = 60;
+  const h = 20;
+  const step = w / Math.max(data.length - 1, 1);
+  const points = data
+    .map((v, i) => {
+      const x = i * step;
+      const y = h - ((v - min) / range) * h;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  const areaPath = `M0,${h} L${points} L${w},${h} Z`;
+  const linePath = `M${points}`;
+  const gradId = `spark-${color.replace("#", "")}`;
+
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className={cn("h-5 w-16 overflow-visible", className)}
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+          <stop offset="100%" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={areaPath} fill={`url(#${gradId})`} />
+      <path
+        d={linePath}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

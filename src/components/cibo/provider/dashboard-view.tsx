@@ -83,6 +83,7 @@ export function DashboardView() {
             icon={<Sparkles className="size-5" />}
             tone="orange"
             delta={12}
+            spark={(a.ordersLast7Days || []).map((d: any) => d.count)}
           />
           <StatCard
             label="Today's revenue"
@@ -90,6 +91,7 @@ export function DashboardView() {
             icon={<IndianRupee className="size-5" />}
             tone="success"
             delta={8}
+            spark={(a.ordersLast7Days || []).map((d: any) => d.revenue)}
           />
           <StatCard
             label="Active listings"
@@ -104,6 +106,7 @@ export function DashboardView() {
             icon={<ClipboardList className="size-5" />}
             tone="gold"
             delta={15}
+            spark={(a.ordersLast7Days || []).map((d: any) => d.count)}
           />
           <StatCard
             label="Waste avoided"

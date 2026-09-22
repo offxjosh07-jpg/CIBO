@@ -23,6 +23,7 @@ import {
   Menu,
   X,
   Quote,
+  TrendingDown,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -596,21 +597,45 @@ function ForCustomers({ onFind }: { onFind: () => void }) {
         </div>
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-3xl bg-forest-deep/40 p-5 backdrop-blur">
-              <span className="font-display text-3xl font-extrabold text-gold">60%</span>
-              <p className="mt-1 text-xs text-ivory/70">average discount on rescued meals</p>
+            <div className="group relative overflow-hidden rounded-3xl bg-forest-deep/40 p-5 backdrop-blur transition hover:bg-forest-deep/60">
+              <div className="absolute -right-3 -top-3 size-16 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+              <div className="relative">
+                <div className="grid size-9 place-items-center rounded-xl bg-orange/20 text-orange">
+                  <TrendingDown className="size-4" />
+                </div>
+                <span className="mt-3 block font-display text-3xl font-extrabold text-gold">60%</span>
+                <p className="mt-0.5 text-xs text-ivory/70">average discount on rescued meals</p>
+              </div>
             </div>
-            <div className="mt-8 rounded-3xl bg-forest-deep/40 p-5 backdrop-blur">
-              <span className="font-display text-3xl font-extrabold text-gold">1.2 km</span>
-              <p className="mt-1 text-xs text-ivory/70">median pickup distance</p>
+            <div className="group relative mt-8 overflow-hidden rounded-3xl bg-forest-deep/40 p-5 backdrop-blur transition hover:bg-forest-deep/60">
+              <div className="absolute -right-3 -top-3 size-16 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+              <div className="relative">
+                <div className="grid size-9 place-items-center rounded-xl bg-success/20 text-success">
+                  <MapPin className="size-4" />
+                </div>
+                <span className="mt-3 block font-display text-3xl font-extrabold text-gold">1.2 km</span>
+                <p className="mt-0.5 text-xs text-ivory/70">median pickup distance</p>
+              </div>
             </div>
-            <div className="rounded-3xl bg-forest-deep/40 p-5 backdrop-blur">
-              <span className="font-display text-3xl font-extrabold text-gold">OTP</span>
-              <p className="mt-1 text-xs text-ivory/70">verified pickup, every time</p>
+            <div className="group relative overflow-hidden rounded-3xl bg-forest-deep/40 p-5 backdrop-blur transition hover:bg-forest-deep/60">
+              <div className="absolute -right-3 -top-3 size-16 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+              <div className="relative">
+                <div className="grid size-9 place-items-center rounded-xl bg-gold/20 text-gold">
+                  <ShieldCheck className="size-4" />
+                </div>
+                <span className="mt-3 block font-display text-3xl font-extrabold text-gold">OTP</span>
+                <p className="mt-0.5 text-xs text-ivory/70">verified pickup, every time</p>
+              </div>
             </div>
-            <div className="mt-8 rounded-3xl bg-forest-deep/40 p-5 backdrop-blur">
-              <span className="font-display text-3xl font-extrabold text-gold">4.6★</span>
-              <p className="mt-1 text-xs text-ivory/70">average provider rating</p>
+            <div className="group relative mt-8 overflow-hidden rounded-3xl bg-forest-deep/40 p-5 backdrop-blur transition hover:bg-forest-deep/60">
+              <div className="absolute -right-3 -top-3 size-16 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+              <div className="relative">
+                <div className="grid size-9 place-items-center rounded-xl bg-olive/20 text-ivory">
+                  <Star className="size-4 fill-gold text-gold" />
+                </div>
+                <span className="mt-3 block font-display text-3xl font-extrabold text-gold">4.6★</span>
+                <p className="mt-0.5 text-xs text-ivory/70">average provider rating</p>
+              </div>
             </div>
           </div>
         </div>

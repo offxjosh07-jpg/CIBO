@@ -542,3 +542,37 @@ Task: Add share-rescue, live rescue ticker, enhanced gallery, admin sidebar poli
 - Replace watermarked stock food images with cleaner ones
 - Consider auto-reseed logic for expiring demo data
 - Could add: real-time WebSocket notifications, delivery rider tracking
+
+---
+Task ID: 19 (Cron Review Round 8)
+Agent: webDevReview cron
+Task: Add sparklines, enhance ForCustomers stats, verify code
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified rounds 1-4)
+- Rounds 5-7 features on disk and lint-clean (reorder, bulk approve, payment cards, testimonials, share button, live ticker, gallery, admin sidebar)
+- **Dev server STILL DOWN** (4th consecutive round — connection refused, auto-restart not recovering)
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors
+
+## New Features Added
+1. **Provider dashboard sparkline mini-charts** — new `Sparkline` component in shared.tsx (SVG-based mini line chart with gradient area fill). Stat cards now display a 7-day trend sparkline next to the delta indicator, color-matched to the card's tone (orange, success, gold, etc.). Today's meals, today's revenue, and today's orders cards all show sparklines derived from `ordersLast7Days` data. StatCard component enhanced with optional `spark` and `sparkColor` props.
+
+## Styling Improvements
+1. **Enhanced landing "For Customers" stats grid** — the 4 stat cards (60% discount, 1.2 km distance, OTP, 4.6★ rating) now have: brand-colored icon circles (orange/success/gold/olive), decorative gold circle that intensifies on hover, hover background darkening, relative-positioned content over decorative layer, group hover transitions. Much more premium than the previous plain text cards.
+2. **StatCard layout improvement** — delta indicator and sparkline now share a flex row at the bottom of the card, creating a cleaner visual hierarchy.
+
+## Bug Fixed
+- **Sparkline SVG closing tag** — initial implementation had `</svg>` where `/>` was needed for the `<path>` element. Fixed the JSX structure.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep ✓
+- **QA via agent-browser NOT performed** — dev server down for 4th consecutive round
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — down since round 5 (4 rounds / ~60+ min). The `bun run dev` process crashes and auto-restart doesn't recover it. Needs infrastructure investigation.
+- QA all features from rounds 5-8 once server recovers: reorder, bulk approve, payment cards, testimonials, share button, live ticker, gallery, admin sidebar, sparklines, ForCustomers stats
+- Replace watermarked stock food images with cleaner ones
+- Consider auto-reseed logic for expiring demo data
+- Could add: real-time WebSocket notifications, delivery rider tracking
