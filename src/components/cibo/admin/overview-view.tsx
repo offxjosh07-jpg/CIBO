@@ -30,7 +30,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { fmtPrice, timeAgo, fmtDateTime } from "@/lib/utils";
+import { fmtPrice, timeAgo, fmtDateTime, cn } from "@/lib/utils";
 import {
   PageShell,
   Panel,
@@ -409,26 +409,52 @@ export function OverviewView() {
               ))}
             </div>
           ) : cityEntries.length ? (
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {cityEntries
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 8)
-                .map(([city, count]) => (
-                  <li key={city}>
-                    <div className="mb-1 flex items-center justify-between text-xs">
-                      <span className="inline-flex items-center gap-1.5 font-semibold text-forest">
-                        <MapPin className="size-3 text-gold" /> {city}
-                      </span>
-                      <span className="font-bold text-forest">{count}</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-cream/60">
-                      <div
-                        className="h-full rounded-full bg-orange"
-                        style={{ width: `${(count / cityMax) * 100}%` }}
-                      />
-                    </div>
-                  </li>
-                ))}
+                .map(([city, count], idx) => {
+                  const pct = Math.round((count / cityMax) * 100);
+                  const isTop = idx === 0;
+                  return (
+                    <li key={city}>
+                      <div className="mb-1 flex items-center justify-between text-xs">
+                        <span className="inline-flex items-center gap-2 font-semibold text-forest">
+                          <span
+                            className={cn(
+                              "grid size-5 place-items-center rounded-md text-[9px] font-bold",
+                              isTop
+                                ? "bg-orange text-white"
+                                : idx === 1
+                                ? "bg-gold text-forest-deep"
+                                : idx === 2
+                                ? "bg-olive/30 text-forest"
+                                : "bg-muted text-muted-foreground"
+                            )}
+                          >
+                            {idx + 1}
+                          </span>
+                          <MapPin className={cn("size-3", isTop ? "text-orange" : "text-gold")} /> {city}
+                        </span>
+                        <span className="font-bold text-forest">
+                          {count}
+                          <span className="ml-1 text-[10px] font-normal text-muted-foreground">{pct}%</span>
+                        </span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-cream/60">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all",
+                            isTop
+                              ? "bg-gradient-to-r from-orange to-gold"
+                              : "bg-gradient-to-r from-gold to-gold/60"
+                          )}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
             </ul>
           ) : (
             <p className="py-6 text-center text-xs text-muted-foreground">

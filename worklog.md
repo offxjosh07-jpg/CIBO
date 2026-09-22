@@ -606,3 +606,32 @@ Task: Add payment method breakdown, enhanced admin empty states
 - Replace watermarked stock food images with cleaner ones
 - Consider auto-reseed logic for expiring demo data
 - Could add: real-time WebSocket notifications, delivery rider tracking, customer wishlist
+
+---
+Task ID: 21 (Cron Review Round 10)
+Agent: webDevReview cron
+Task: Enhanced wizard step indicator, admin city breakdown with ranks
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified rounds 1-4)
+- Rounds 5-9 features on disk and lint-clean
+- **Dev server STILL DOWN** (6th consecutive round — connection refused, auto-restart not recovering)
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors
+
+## Styling Improvements
+1. **Enhanced provider create-listing wizard step indicator** — completely redesigned the step progress bar with: "Step X of 5" + "X% complete" header labels, an overall gradient progress bar (gold→orange) at the top showing completion percentage, larger 8x8 step circles with icons inside (instead of numbers), active step has orange fill + cibo-shadow-gold + a pulsing ring-2 ring-orange/30, completed steps show Check icon in success green, gradient connector lines (from-success to-success/50) for completed steps, step labels without redundant icon duplicates. More premium and informative.
+
+2. **Enhanced admin city breakdown** — city list now shows: rank badges (#1=orange, #2=gold, #3=olive, rest=muted), gold/orange MapPin for top city, percentage labels next to counts, gradient progress bars (top city uses orange→gold gradient, others use gold→gold/60), tighter spacing. More visually competitive and informative.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep ✓
+- **QA via agent-browser NOT performed** — dev server down for 6th consecutive round
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — down since round 5 (6 rounds / ~90+ min). The `bun run dev` process crashes and auto-restart doesn't recover it. Needs infrastructure investigation.
+- QA all features from rounds 5-10 once server recovers
+- Replace watermarked stock food images with cleaner ones
+- Consider auto-reseed logic for expiring demo data
+- Could add: real-time WebSocket notifications, delivery rider tracking, customer wishlist

@@ -303,23 +303,38 @@ export function CreateView() {
       </div>
 
       {/* Step indicator */}
-      <div className="rounded-2xl border border-forest/8 bg-card p-4 cibo-shadow">
-        <div className="flex items-center gap-2">
+      <div className="relative overflow-hidden rounded-2xl border border-forest/8 bg-card p-5 cibo-shadow">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            Step {step} of {STEPS.length}
+          </p>
+          <p className="text-[11px] font-bold text-orange">
+            {Math.round((step / STEPS.length) * 100)}% complete
+          </p>
+        </div>
+        {/* Overall progress bar */}
+        <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-gold to-orange transition-all duration-500"
+            style={{ width: `${(step / STEPS.length) * 100}%` }}
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
           {STEPS.map((s, i) => {
             const Icon = s.icon;
             const active = step === s.n;
             const done = step > s.n;
             return (
-              <div key={s.n} className="flex flex-1 items-center gap-2">
+              <div key={s.n} className="flex flex-1 items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => {
                     if (s.n < step) setStep(s.n);
                   }}
                   className={cn(
-                    "flex items-center gap-2 rounded-xl px-2 py-1.5 text-xs font-bold transition",
+                    "group flex items-center gap-2 rounded-xl px-1.5 py-1 text-xs font-bold transition",
                     active
-                      ? "bg-cream text-forest"
+                      ? "bg-cream/80 text-forest"
                       : done
                       ? "text-success"
                       : "text-muted-foreground",
@@ -329,25 +344,36 @@ export function CreateView() {
                 >
                   <span
                     className={cn(
-                      "grid size-6 place-items-center rounded-full text-[10px] font-bold",
+                      "relative grid size-8 place-items-center rounded-full text-[11px] font-bold transition",
                       active
-                        ? "bg-orange text-white"
+                        ? "bg-orange text-white cibo-shadow-gold"
                         : done
                         ? "bg-success text-white"
                         : "bg-muted text-muted-foreground"
                     )}
                   >
-                    {done ? <Check className="size-3" /> : s.n}
+                    {done ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <>
+                        <Icon className="size-4" />
+                        {active && (
+                          <span className="absolute -inset-1 rounded-full ring-2 ring-orange/30" />
+                        )}
+                      </>
+                    )}
                   </span>
                   <span className="hidden items-center gap-1.5 sm:inline-flex">
-                    <Icon className="size-3.5" /> {s.label}
+                    {s.label}
                   </span>
                 </button>
                 {i < STEPS.length - 1 && (
                   <div
                     className={cn(
-                      "h-0.5 flex-1 rounded-full",
-                      step > s.n ? "bg-success" : "bg-forest/8"
+                      "h-0.5 flex-1 rounded-full transition-all",
+                      step > s.n
+                        ? "bg-gradient-to-r from-success to-success/50"
+                        : "bg-forest/8"
                     )}
                   />
                 )}
