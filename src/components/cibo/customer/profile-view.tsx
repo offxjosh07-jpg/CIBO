@@ -2,6 +2,8 @@
 
 import { useApp } from "@/lib/store";
 import { useAuth } from "@/components/providers";
+import { useQuery } from "@tanstack/react-query";
+import { orderApi } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
@@ -24,9 +26,13 @@ import {
   FileText,
   Lock,
   Phone,
+  Leaf,
+  ShoppingBag,
+  IndianRupee,
+  TrendingDown,
 } from "lucide-react";
 import { useState } from "react";
-import { cn, initials } from "@/lib/utils";
+import { cn, initials, fmtPrice } from "@/lib/utils";
 
 export function ProfileView() {
   const { user, logout } = useAuth();
@@ -37,6 +43,14 @@ export function ProfileView() {
   const [diet, setDiet] = useState("ANY");
   const [halalPref, setHalalPref] = useState(false);
   const [vegOnly, setVegOnly] = useState(false);
+
+  // Rescue impact stats
+  const { data: statsData } = useQuery({
+    queryKey: ["order-stats"],
+    queryFn: () => orderApi.stats(),
+    enabled: !!user,
+  });
+  const stats = statsData?.stats;
 
   if (!user) {
     return (
@@ -126,6 +140,63 @@ export function ProfileView() {
           </div>
         </div>
       </section>
+
+      {/* Rescue impact stats */}
+      {stats && stats.totalOrders > 0 && (
+        <section className="overflow-hidden rounded-3xl border border-forest/8 bg-gradient-to-br from-cream to-ivory p-5 cibo-shadow">
+          <div className="flex items-center gap-2">
+            <Leaf className="size-4 text-success" />
+            <h3 className="font-display text-sm font-bold uppercase tracking-wide text-forest">
+              Your rescue impact
+            </h3>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <ImpactStat
+              icon={ShoppingBag}
+              value={String(stats.mealsRescued)}
+              label="Meals rescued"
+              color="bg-orange/15 text-orange"
+            />
+            <ImpactStat
+              icon={TrendingDown}
+              value={fmtPrice(stats.totalSaved)}
+              label="Money saved"
+              color="bg-success/15 text-success"
+            />
+            <ImpactStat
+              icon={Leaf}
+              value={`${stats.co2AvoidedKg} kg`}
+              label="CO₂ avoided"
+              color="bg-olive/15 text-olive"
+            />
+            <ImpactStat
+              icon={ClipboardList}
+              value={String(stats.completedOrders)}
+              label="Completed orders"
+              color="bg-gold/15 text-gold"
+            />
+          </div>
+          {stats.topProviders && stats.topProviders.length > 0 && (
+            <div className="mt-4 border-t border-forest/8 pt-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Your favourite providers
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {stats.topProviders.map((p: any) => (
+                  <span
+                    key={p.id}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-forest/10 bg-card px-2.5 py-1 text-xs font-semibold text-forest"
+                  >
+                    <span className="size-1.5 rounded-full bg-gold" />
+                    {p.businessName}
+                    <span className="text-muted-foreground">· {p.orderCount}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Role shortcuts */}
       {(user.role === "PROVIDER" ||
@@ -316,5 +387,31 @@ function Row({
       {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
       <ChevronRight className="size-4 text-muted-foreground" />
     </button>
+  );
+}
+
+function ImpactStat({
+  icon: Icon,
+  value,
+  label,
+  color,
+}: {
+  icon: typeof UserIcon;
+  value: string;
+  label: string;
+  color: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-forest/8 bg-card p-3">
+      <div className={cn("grid size-8 place-items-center rounded-lg", color)}>
+        <Icon className="size-4" />
+      </div>
+      <div className="mt-2 font-display text-lg font-extrabold text-forest">
+        {value}
+      </div>
+      <div className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
+    </div>
   );
 }

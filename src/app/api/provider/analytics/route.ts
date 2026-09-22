@@ -113,13 +113,18 @@ export async function GET() {
       images: true,
     },
   });
-  const topFoods = topListingRows.map((l: any) => ({
-    id: l.id,
-    title: l.title,
-    rescues: l.rescues,
-    ciboPrice: l.ciboPrice,
-    originalPrice: l.originalPrice,
-  }));
+  const topFoods = topListingRows.map((l: any) => {
+    let images: string[] = [];
+    try { images = JSON.parse(l.images); } catch { images = []; }
+    return {
+      id: l.id,
+      title: l.title,
+      rescues: l.rescues,
+      ciboPrice: l.ciboPrice,
+      originalPrice: l.originalPrice,
+      image: images[0] || null,
+    };
+  });
 
   const totalOrders = provider.totalOrders;
   const totalRevenue = provider.totalRevenue;

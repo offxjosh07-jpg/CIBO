@@ -216,8 +216,8 @@ export function DashboardView() {
                     }}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-bold text-forest">{f.title}</p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="line-clamp-2 text-xs font-bold leading-tight text-forest">{f.title}</p>
+                    <p className="mt-0.5 text-[10px] text-muted-foreground">
                       {f.rescues || 0} rescues · {fmtPrice(f.ciboPrice)}
                     </p>
                   </div>

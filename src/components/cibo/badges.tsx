@@ -134,16 +134,28 @@ export function DeadlineChip({ deadline, className }: { deadline: string | Date;
   const d = typeof deadline === "string" ? new Date(deadline) : deadline;
   const mins = Math.max(0, Math.round((d.getTime() - Date.now()) / 60000));
   const urgent = mins <= 30;
+  const soon = mins > 30 && mins <= 90;
+  // Format duration readably
+  const fmtDur = (m: number) => {
+    if (m <= 0) return "Closed";
+    if (m < 60) return `${m}m left`;
+    const h = Math.floor(m / 60);
+    const rem = m % 60;
+    if (h < 24) return rem ? `${h}h ${rem}m left` : `${h}h left`;
+    const days = Math.floor(h / 24);
+    const remH = h % 24;
+    return remH ? `${days}d ${remH}h left` : `${days}d left`;
+  };
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
-        urgent ? "bg-danger/10 text-danger" : "bg-gold/15 text-gold",
+        urgent ? "bg-danger/10 text-danger" : soon ? "bg-orange/15 text-orange" : "bg-gold/15 text-gold",
         className
       )}
     >
       <Clock className="size-2.5" />
-      {mins <= 0 ? "Closed" : urgent ? `Closes in ${mins}m` : `${mins}m left`}
+      {mins <= 0 ? "Closed" : urgent ? `Closes in ${mins}m` : fmtDur(mins)}
     </span>
   );
 }

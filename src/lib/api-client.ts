@@ -112,6 +112,7 @@ export const orderApi = {
   verifyOtp: (id: string, otp: string) => api.patch<{ order: Order }>(`/api/orders/${id}/verify-otp`, { otp }),
   providerOrders: () => api.get<{ orders: Order[] }>("/api/provider/orders"),
   updateStatus: (id: string, status: string) => api.patch<{ order: Order }>(`/api/provider/orders/${id}/status`, { status }),
+  stats: () => api.get<{ stats: { totalOrders: number; completedOrders: number; totalSpent: number; totalSaved: number; mealsRescued: number; co2AvoidedKg: number; avgOrderValue: number; topProviders: any[] } }>("/api/orders/stats"),
 };
 
 // ---- Provider ----
@@ -151,6 +152,10 @@ export const complaintApi = {
 export const reviewApi = {
   create: (data: { orderId: string; rating: number; comment?: string }) =>
     api.post<{ review: Review }>("/api/reviews", data),
+  list: (providerId: string, limit = 10) =>
+    api.get<{ reviews: any[]; summary: { average: number; count: number; distribution: Record<number, number> } }>(
+      `/api/reviews?providerId=${providerId}&limit=${limit}`
+    ),
 };
 
 // ---- Admin ----

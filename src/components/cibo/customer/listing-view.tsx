@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useApp, useCart } from "@/lib/store";
-import { listingApi, complaintApi, favApi } from "@/lib/api-client";
+import { listingApi, complaintApi, favApi, reviewApi } from "@/lib/api-client";
 import {
   VegBadge,
   HalalBadge,
@@ -115,6 +115,15 @@ export function ListingView() {
   const related = (relatedData?.listings || []).filter(
     (l) => l.id !== listing?.id
   );
+
+  // Provider reviews
+  const { data: reviewsData, isLoading: reviewsLoading } = useQuery({
+    queryKey: ["reviews", listing?.providerId],
+    queryFn: () => reviewApi.list(listing!.providerId, 5),
+    enabled: !!listing?.providerId,
+  });
+  const reviews = reviewsData?.reviews || [];
+  const reviewSummary = reviewsData?.summary;
 
   if (isLoading) return <ListingSkeleton onBack={() => setCustomer("home")} />;
   if (isError || !listing)
@@ -524,6 +533,127 @@ export function ListingView() {
           listing={listing}
         />
       </div>
+
+      {/* Provider reviews */}
+      {listing.providerId && (
+        <section className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h3 className="flex items-center gap-2 font-display text-xl font-bold text-forest">
+              <Star className="size-4 fill-gold text-gold" /> Provider reviews
+            </h3>
+            {reviewSummary && reviewSummary.count > 0 && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="font-display text-2xl font-bold text-forest">
+                  {reviewSummary.average.toFixed(1)}
+                </span>
+                <span className="text-muted-foreground">
+                  · {reviewSummary.count} review{reviewSummary.count !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
+          </div>
+          {reviewsLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="cibo-skeleton h-20 rounded-2xl" />
+              ))}
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="rounded-2xl border border-forest/8 bg-card p-6 text-center text-sm text-muted-foreground">
+              No reviews yet. Be the first to review after completing an order!
+            </div>
+          ) : (
+            <>
+              {/* Rating distribution bar */}
+              {reviewSummary && reviewSummary.count > 0 && (
+                <div className="rounded-2xl border border-forest/8 bg-card p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="text-center">
+                      <div className="font-display text-4xl font-extrabold text-forest">
+                        {reviewSummary.average.toFixed(1)}
+                      </div>
+                      <div className="mt-1 flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star
+                            key={s}
+                            className={cn(
+                              "size-3",
+                              s <= Math.round(reviewSummary.average)
+                                ? "fill-gold text-gold"
+                                : "text-muted/40"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <div className="mt-1 text-[10px] text-muted-foreground">
+                        {reviewSummary.count} total
+                      </div>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      {[5, 4, 3, 2, 1].map((star) => {
+                        const c = reviewSummary.distribution[star] || 0;
+                        const pct = reviewSummary.count > 0 ? (c / reviewSummary.count) * 100 : 0;
+                        return (
+                          <div key={star} className="flex items-center gap-2 text-[11px]">
+                            <span className="w-3 text-muted-foreground">{star}</span>
+                            <Star className="size-2.5 fill-gold text-gold" />
+                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                              <div
+                                className="h-full rounded-full bg-gold transition-all"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <span className="w-6 text-right text-muted-foreground">{c}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {/* Review cards */}
+              <div className="space-y-2">
+                {reviews.map((r: any) => (
+                  <div
+                    key={r.id}
+                    className="rounded-2xl border border-forest/8 bg-card p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="grid size-9 place-items-center rounded-full bg-cream font-bold text-forest text-sm">
+                          {r.user?.name?.[0] || "A"}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-forest">{r.user?.name || "Anonymous"}</p>
+                          <div className="mt-0.5 flex gap-0.5">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                              <Star
+                                key={s}
+                                className={cn(
+                                  "size-3",
+                                  s <= r.rating ? "fill-gold text-gold" : "text-muted/40"
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-[11px] text-muted-foreground">
+                        {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      </span>
+                    </div>
+                    {r.comment && (
+                      <p className="mt-2.5 text-sm leading-relaxed text-forest/80">
+                        "{r.comment}"
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+      )}
 
       {/* Related */}
       {related.length > 0 && (

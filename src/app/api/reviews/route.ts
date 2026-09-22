@@ -1,8 +1,57 @@
 import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
-import { requireRole, ok, err } from "@/lib/api";
+import { requireUser, requireRole, ok, err } from "@/lib/api";
 
 export const runtime = "nodejs";
+
+// GET /api/reviews?providerId=... -> { reviews, summary }
+// Returns latest reviews for a provider + rating summary.
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const providerId = url.searchParams.get("providerId");
+  const limit = Math.min(20, Math.max(1, Number(url.searchParams.get("limit") || "10")));
+
+  if (!providerId) return err("providerId required", 400, "BAD_PROVIDER");
+
+  const reviews = await db.review.findMany({
+    where: { providerId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: {
+      user: { select: { id: true, name: true, avatarUrl: true } },
+    },
+  });
+
+  const summary = await db.review.aggregate({
+    where: { providerId },
+    _avg: { rating: true },
+    _count: { _all: true },
+  });
+
+  // Distribution
+  const distRows = await db.review.groupBy({
+    by: ["rating"],
+    where: { providerId },
+    _count: { _all: true },
+  });
+  const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  for (const r of distRows) distribution[r.rating] = r._count._all;
+
+  return ok({
+    reviews: reviews.map((r) => ({
+      id: r.id,
+      rating: r.rating,
+      comment: r.comment,
+      createdAt: r.createdAt,
+      user: { id: r.user.id, name: r.user.name, avatarUrl: r.user.avatarUrl },
+    })),
+    summary: {
+      average: summary._avg.rating ? Math.round(summary._avg.rating * 100) / 100 : 0,
+      count: summary._count._all,
+      distribution,
+    },
+  });
+}
 
 // POST /api/reviews { orderId, rating, comment? } -> { review }
 // Only if order COMPLETED and no existing review for that order.

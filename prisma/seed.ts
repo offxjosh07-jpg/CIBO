@@ -797,6 +797,83 @@ async function main() {
     });
   }
 
+  // Historical orders across last 7 days for charts (spread across providers & customers)
+  const statuses7d = ["COMPLETED", "COMPLETED", "COMPLETED", "CANCELLED", "COMPLETED", "COMPLETED", "COMPLETED"];
+  const payMethods = ["UPI", "CARD", "WALLET", "UPI", "NETBANKING", "UPI", "CARD"];
+  for (let day = 6; day >= 0; day--) {
+    const ordersToday = 1 + Math.floor(Math.random() * 4); // 1-4 orders per day
+    for (let j = 0; j < ordersToday; j++) {
+      const cl = createdListings[Math.floor(Math.random() * Math.min(createdListings.length - 2, activeListings.length))];
+      if (!cl || cl.listing.status !== "ACTIVE") continue;
+      const cust = customerUsers[Math.floor(Math.random() * customerUsers.length)];
+      const qty = 1 + Math.floor(Math.random() * 3);
+      const subtotal = cl.listing.ciboPrice * qty;
+      const platformFee = 5;
+      const deliveryFee = Math.random() > 0.5 ? 25 : 0;
+      const total = subtotal + platformFee + deliveryFee;
+      const st = statuses7d[Math.floor(Math.random() * statuses7d.length)];
+      const hrAgo = day * 24 + Math.floor(Math.random() * 20) + 2;
+      try {
+        const ho = await db.order.create({
+          data: {
+            orderNumber: `CIBO-${new Date().getFullYear()}-${String(200 + day * 10 + j).padStart(6, "0")}`,
+            customerId: cust.user.id,
+            providerId: cl.provider.profile.id,
+            status: st,
+            subtotal,
+            platformFee,
+            deliveryFee,
+            tax: 0,
+            discount: cl.listing.originalPrice * qty - subtotal,
+            total,
+            paymentMethod: payMethods[Math.floor(Math.random() * payMethods.length)],
+            paymentStatus: st === "CANCELLED" ? "REFUNDED" : "PAID",
+            paymentRef: "MOCK-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
+            fulfillmentType: deliveryFee > 0 ? "DELIVERY" : "PICKUP",
+            pickupOtp: String(1000 + Math.floor(Math.random() * 9000)),
+            pickupStart: cl.listing.pickupStart,
+            pickupDeadline: cl.listing.pickupDeadline,
+            deliveryAddress: deliveryFee > 0 ? `${cust.user.name.split(" ")[0]} St, ${cust.city}` : null,
+            completedAt: st === "COMPLETED" ? hoursAgo(hrAgo) : null,
+            createdAt: hoursAgo(hrAgo),
+            items: {
+              create: {
+                listingId: cl.listing.id,
+                title: cl.listing.title,
+                image: JSON.parse(cl.listing.images)[0],
+                price: cl.listing.ciboPrice,
+                quantity: qty,
+                providerId: cl.provider.profile.id,
+                orderIdSnapshot: "snapshot",
+              },
+            },
+          },
+        });
+        await db.payment.create({
+          data: {
+            orderId: ho.id,
+            amount: total,
+            method: ho.paymentMethod,
+            status: ho.paymentStatus,
+            txnId: ho.paymentRef!,
+            gateway: "MOCK",
+          },
+        });
+        if (st === "COMPLETED" && Math.random() > 0.4) {
+          await db.review.create({
+            data: {
+              userId: cust.user.id,
+              providerId: cl.provider.profile.id,
+              orderId: ho.id,
+              rating: 3 + Math.floor(Math.random() * 3),
+              comment: ["Great rescue, tasty food!", "Picked up on time, good value.", "Loved it, will order again.", "Food was fresh and hot."][Math.floor(Math.random() * 4)],
+            },
+          });
+        }
+      } catch (e) { /* skip duplicate orderNumber */ }
+    }
+  }
+
   // A complaint
   await db.complaint.create({
     data: {
