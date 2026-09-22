@@ -54,6 +54,7 @@ export function LandingSurface() {
       <LandingNav onEnter={enterApp} onAuth={() => setAuthView("login")} mobileNav={mobileNav} setMobileNav={setMobileNav} city={city} setLocation={setLocation} />
       <LandingHero onFind={enterApp} onPartner={() => setAuthView("providerSignup")} city={city} />
       <Marquee />
+      <LiveRescueTicker />
       <HowItWorks />
       <WhyCibo />
       <FoodRescuePreview onExplore={enterApp} />
@@ -333,6 +334,76 @@ function Marquee() {
         ))}
       </div>
     </div>
+  );
+}
+
+// ---------------- Live rescue ticker ----------------
+function LiveRescueTicker() {
+  // Simulated live counter that increments periodically
+  const [count, setCount] = useState(847);
+  const recentRescues = [
+    { city: "Tirunelveli", food: "Chicken Biryani", mins: 2 },
+    { city: "Madurai", food: "Veg Meals", mins: 4 },
+    { city: "Chennai", food: "Pizza", mins: 7 },
+    { city: "Nagercoil", food: "Bakery Combo", mins: 11 },
+    { city: "Tirunelveli", food: "Dosa", mins: 15 },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((c) => c + Math.floor(Math.random() * 3) + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="border-b border-forest/8 bg-cream/40 py-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {/* Live counter */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex size-3">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="relative inline-flex size-3 rounded-full bg-success" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Meals rescued today
+              </p>
+              <p className="font-display text-2xl font-extrabold text-forest">
+                <motion.span
+                  key={count}
+                  initial={{ opacity: 0.5, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {count.toLocaleString("en-IN")}
+                </motion.span>
+                <span className="ml-2 text-xs font-normal text-muted-foreground">+ counting</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Recent rescues */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-cibo lg:justify-end">
+            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Recent:
+            </span>
+            {recentRescues.map((r, i) => (
+              <div
+                key={i}
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-forest/10 bg-card px-2.5 py-1 text-[11px]"
+              >
+                <span className="size-1.5 rounded-full bg-orange" />
+                <span className="font-semibold text-forest">{r.food}</span>
+                <span className="text-muted-foreground">· {r.city}</span>
+                <span className="text-muted-foreground/60">{r.mins}m ago</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

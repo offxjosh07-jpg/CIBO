@@ -176,19 +176,33 @@ function SidebarContent() {
                       onClick={() => setAdmin(n.view)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-semibold transition",
+                        "group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-semibold transition",
                         active
-                          ? "border-l-[3px] border-orange bg-ivory/10 text-gold"
-                          : "border-l-[3px] border-transparent text-ivory/70 hover:bg-ivory/5 hover:text-ivory"
+                          ? "bg-ivory/10 text-gold"
+                          : "text-ivory/70 hover:bg-ivory/5 hover:text-ivory"
                       )}
                     >
+                      {/* Active left indicator */}
+                      <span
+                        className={cn(
+                          "absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full transition-all",
+                          active ? "bg-orange opacity-100" : "bg-transparent opacity-0"
+                        )}
+                      />
+                      {/* Glow background for active */}
+                      {active && (
+                        <span className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-r from-orange/10 to-transparent" />
+                      )}
                       <Icon
                         className={cn(
-                          "size-4 shrink-0",
-                          active ? "text-gold" : "text-ivory/50"
+                          "size-4 shrink-0 transition",
+                          active ? "text-gold" : "text-ivory/50 group-hover:text-ivory/70"
                         )}
                       />
                       {n.label}
+                      {active && (
+                        <span className="ml-auto size-1.5 rounded-full bg-orange" />
+                      )}
                     </button>
                   </li>
                 );

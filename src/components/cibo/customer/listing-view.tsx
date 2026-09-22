@@ -46,6 +46,8 @@ import {
   Store,
   AlertTriangle,
   PackageCheck,
+  Share2,
+  Check,
 } from "lucide-react";
 import {
   cn,
@@ -68,6 +70,7 @@ export function ListingView() {
 
   const [qty, setQty] = useState(1);
   const [reportOpen, setReportOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["listing", id, lat, lng],
@@ -197,7 +200,7 @@ export function ListingView() {
         {/* Image gallery */}
         <div className="space-y-3">
           <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-forest/8 bg-card cibo-shadow">
-            <FoodImage src={images[0]} alt={listing.title} />
+            <FoodImage src={images[activeImage] || images[0]} alt={listing.title} />
             <div className="absolute inset-0 bg-gradient-to-t from-forest-deep/40 via-transparent to-transparent" />
             <div className="absolute left-3 top-3 flex items-center gap-1.5">
               <RescueBadge />
@@ -207,32 +210,50 @@ export function ListingView() {
                 </span>
               )}
             </div>
-            <button
-              aria-label={isFav ? "Remove from favorites" : "Save to favorites"}
-              onClick={() => toggleFav.mutate()}
-              className="absolute right-3 top-3 grid size-10 place-items-center rounded-full bg-card/90 backdrop-blur transition hover:bg-card"
-            >
-              <Heart
-                className={cn(
-                  "size-4 transition",
-                  isFav ? "fill-orange text-orange" : "text-forest"
-                )}
-              />
-            </button>
+            <div className="absolute right-3 top-3 flex items-center gap-2">
+              <ShareButton title={listing.title} providerName={listing.provider?.businessName} ciboPrice={listing.ciboPrice} originalPrice={listing.originalPrice} />
+              <button
+                aria-label={isFav ? "Remove from favorites" : "Save to favorites"}
+                onClick={() => toggleFav.mutate()}
+                className="grid size-10 place-items-center rounded-full bg-card/90 backdrop-blur transition hover:bg-card"
+              >
+                <Heart
+                  className={cn(
+                    "size-4 transition",
+                    isFav ? "fill-orange text-orange" : "text-forest"
+                  )}
+                />
+              </button>
+            </div>
             <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
               <DiscountTag pct={pct} />
               <StatusBadge status={listing.status} />
             </div>
+            {/* Image counter */}
+            {images.length > 1 && (
+              <div className="absolute bottom-3 right-3 rounded-full bg-forest-deep/70 px-2 py-0.5 text-[10px] font-bold text-ivory backdrop-blur">
+                {activeImage + 1} / {images.length}
+              </div>
+            )}
           </div>
           {images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-cibo">
               {images.map((img, i) => (
-                <div
+                <button
                   key={i}
-                  className="relative aspect-square w-20 shrink-0 overflow-hidden rounded-xl border border-forest/10"
+                  onClick={() => setActiveImage(i)}
+                  className={cn(
+                    "relative aspect-square w-20 shrink-0 overflow-hidden rounded-xl border-2 transition",
+                    activeImage === i
+                      ? "border-orange ring-2 ring-orange/20"
+                      : "border-forest/10 hover:border-gold"
+                  )}
                 >
                   <FoodImage src={img} alt={`${listing.title} ${i + 1}`} />
-                </div>
+                  {activeImage === i && (
+                    <div className="absolute inset-0 bg-orange/10" />
+                  )}
+                </button>
               ))}
             </div>
           )}
@@ -830,5 +851,60 @@ function ListingSkeleton({ onBack }: { onBack: () => void }) {
         </div>
       </div>
     </PageShell>
+  );
+}
+
+function ShareButton({
+  title,
+  providerName,
+  ciboPrice,
+  originalPrice,
+}: {
+  title: string;
+  providerName?: string;
+  ciboPrice: number;
+  originalPrice: number;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const share = async () => {
+    const pct = Math.round(((originalPrice - ciboPrice) / originalPrice) * 100);
+    const text = `🥘 Rescued on CIBO: ${title}${providerName ? ` from ${providerName}` : ""} — ₹${ciboPrice} (was ₹${originalPrice}, ${pct}% off)! Good food deserves another chance. 🌱`;
+    const shareData = {
+      title: "CIBO Food Rescue",
+      text,
+      url: typeof window !== "undefined" ? window.location.href : "https://cibo.app",
+    };
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch {
+      // user cancelled — fall through to clipboard
+    }
+    // Fallback: copy to clipboard
+    try {
+      await navigator.clipboard.writeText(`${text} ${shareData.url}`);
+      setCopied(true);
+      toast.success("Link copied to clipboard!", { description: "Share this rescue with friends." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+
+  return (
+    <button
+      aria-label="Share this rescue"
+      onClick={share}
+      className="grid size-10 place-items-center rounded-full bg-card/90 backdrop-blur transition hover:bg-card"
+    >
+      {copied ? (
+        <Check className="size-4 text-success" />
+      ) : (
+        <Share2 className="size-4 text-forest" />
+      )}
+    </button>
   );
 }

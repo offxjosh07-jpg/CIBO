@@ -510,3 +510,35 @@ Task: Add reorder, bulk verification, enhanced payment cards & testimonials; QA 
 - Replace watermarked stock food images with cleaner ones
 - Could add: real-time WebSocket notifications, delivery rider tracking, customer share-rescue social feature
 - Consider auto-reseed logic for expiring demo data
+
+---
+Task ID: 18 (Cron Review Round 7)
+Agent: webDevReview cron
+Task: Add share-rescue, live rescue ticker, enhanced gallery, admin sidebar polish
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified rounds 1-4)
+- Rounds 5-6 features on disk and lint-clean (reorder, bulk approve, payment cards, testimonials)
+- **Dev server STILL DOWN** (3rd consecutive round — connection refused, auto-restart not recovering)
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors
+
+## New Features Added
+1. **Customer share-rescue button** — listing detail now has a Share button (Share2 icon) next to the favorite button on the hero image. Uses the Web Share API (`navigator.share`) when available, falls back to clipboard copy with a toast notification. Generates share text with food title, provider, price, discount %, and CIBO branding. Shows a green Check icon for 2s after copying.
+2. **Landing live rescue counter ticker** — new LiveRescueTicker section between the marquee and "How it works". Shows an animated "Meals rescued today" counter that increments by 1-3 every 4 seconds with a pulsing green live dot. Also shows a horizontal scroll of recent rescues (food name · city · mins ago) with orange dots. Responsive: stacks on mobile, side-by-side on desktop.
+
+## Styling Improvements
+1. **Enhanced listing detail gallery** — image gallery now has: clickable thumbnails that switch the main image, active thumbnail with orange border + ring + overlay tint, image counter badge ("1 / 2") in bottom-right of main image, smooth transition between images. Uses `activeImage` state.
+2. **Enhanced admin sidebar active states** — active nav items now have: a rounded orange left indicator bar (h-5 w-1) that animates in, a subtle gradient glow background (from-orange/10 to-transparent), a small orange dot on the right edge, group hover effects on icons. Replaced the old `border-l-[3px]` approach with a more premium layered design.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep ✓
+- **QA via agent-browser NOT performed** — dev server down for 3rd consecutive round
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — down since round 5 (3 rounds / ~45+ min). The `bun run dev` process crashes and auto-restart doesn't recover it. This needs investigation at the infrastructure level.
+- QA all features from rounds 5-7 once server recovers: reorder, bulk approve, payment cards, testimonials, share button, live ticker, gallery, admin sidebar
+- Replace watermarked stock food images with cleaner ones
+- Consider auto-reseed logic for expiring demo data
+- Could add: real-time WebSocket notifications, delivery rider tracking
