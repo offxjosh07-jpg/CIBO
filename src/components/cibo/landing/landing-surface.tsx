@@ -24,9 +24,9 @@ import {
   X,
   Quote,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const CITIES = ["Tirunelveli", "Nagercoil", "Madurai", "Chennai"];
 
@@ -180,10 +180,38 @@ function LocationPill({
 
 // ---------------- Hero ----------------
 function LandingHero({ onFind, onPartner, city }: { onFind: () => void; onPartner: () => void; city: string }) {
+  // Mouse parallax for the mascot
+  const sectionRef = useRef<HTMLElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 120, damping: 18 });
+  const sy = useSpring(my, { stiffness: 120, damping: 18 });
+  const mascotX = useTransform(sx, [-0.5, 0.5], [-12, 12]);
+  const mascotY = useTransform(sy, [-0.5, 0.5], [-12, 12]);
+  const card1X = useTransform(sx, [-0.5, 0.5], [-20, 20]);
+  const card1Y = useTransform(sy, [-0.5, 0.5], [-16, 16]);
+  const card2X = useTransform(sx, [-0.5, 0.5], [18, -18]);
+  const card2Y = useTransform(sy, [-0.5, 0.5], [14, -14]);
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    mx.set((e.clientX - rect.left) / rect.width - 0.5);
+    my.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
   return (
-    <section className="relative overflow-hidden">
+    <section ref={sectionRef} onMouseMove={onMouseMove} className="relative overflow-hidden">
       <div className="absolute inset-0 cibo-hero-glow" />
       <div className="absolute inset-0 cibo-grain opacity-60" />
+      {/* Decorative floating food emojis */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <span className="absolute left-[8%] top-[20%] text-3xl opacity-20 animate-float" style={{ animationDelay: "0s" }}>🍽️</span>
+        <span className="absolute right-[12%] top-[15%] text-2xl opacity-20 animate-float" style={{ animationDelay: "1s" }}>🥘</span>
+        <span className="absolute left-[15%] bottom-[15%] text-2xl opacity-15 animate-float" style={{ animationDelay: "2s" }}>🍛</span>
+        <span className="absolute right-[8%] bottom-[20%] text-3xl opacity-20 animate-float" style={{ animationDelay: "1.5s" }}>🥗</span>
+      </div>
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:pb-24 lg:pt-20">
         <div className="flex flex-col justify-center">
           <motion.div
@@ -225,12 +253,13 @@ function LandingHero({ onFind, onPartner, city }: { onFind: () => void; onPartne
           </motion.div>
         </div>
 
-        {/* Hero visual: mascot + floating cards */}
+        {/* Hero visual: mascot + floating cards with parallax */}
         <div className="relative flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
+            style={{ x: mascotX, y: mascotY }}
             className="relative"
           >
             <div className="absolute inset-0 -z-10 rounded-full bg-gold/30 blur-3xl" />
@@ -244,6 +273,7 @@ function LandingHero({ onFind, onPartner, city }: { onFind: () => void; onPartne
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
+              style={{ x: card1X, y: card1Y }}
               className="absolute -left-6 top-10 hidden rounded-2xl border border-forest/8 bg-card p-3 cibo-shadow sm:block"
             >
               <div className="flex items-center gap-2">
@@ -261,6 +291,7 @@ function LandingHero({ onFind, onPartner, city }: { onFind: () => void; onPartne
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.55 }}
+              style={{ x: card2X, y: card2Y }}
               className="absolute -right-4 bottom-8 hidden rounded-2xl border border-forest/8 bg-card p-3 cibo-shadow sm:block"
             >
               <div className="flex items-center gap-2">

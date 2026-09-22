@@ -242,16 +242,47 @@ function ListingCard({
           </span>
           <span className="inline-flex items-center gap-1">
             <Eye className="size-3 text-muted-foreground" />
-            {listing.views}
+            {listing.views} views
           </span>
           <span className="inline-flex items-center gap-1">
             <ShoppingCart className="size-3 text-muted-foreground" />
-            {listing.rescues}
+            {listing.rescues} rescues
           </span>
           {listing.status === "ACTIVE" && (
             <DeadlineChip deadline={listing.pickupDeadline} />
           )}
         </div>
+        {/* Performance insight bar */}
+        {listing.views > 0 && (
+          <div className="mt-2.5 rounded-xl border border-forest/5 bg-cream/30 p-2.5">
+            <div className="flex items-center justify-between gap-2 text-[10px]">
+              <span className="font-semibold uppercase tracking-wide text-muted-foreground">
+                Rescue conversion
+              </span>
+              <span className="font-bold text-forest">
+                {listing.rescues} / {listing.views} views
+                <span className="ml-1.5 text-orange">
+                  {Math.round((listing.rescues / listing.views) * 100)}%
+                </span>
+              </span>
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-gold to-orange transition-all"
+                style={{
+                  width: `${Math.min(100, (listing.rescues / listing.views) * 100)}%`,
+                }}
+              />
+            </div>
+            <p className="mt-1 text-[9px] text-muted-foreground">
+              {listing.rescues / listing.views >= 0.3
+                ? "Excellent conversion — this listing is resonating well."
+                : listing.rescues / listing.views >= 0.1
+                ? "Good conversion. Consider better photos or pricing to boost further."
+                : "Low conversion. Try a sharper title, better image, or lower price."}
+            </p>
+          </div>
+        )}
         <div className="mt-3 flex items-center gap-1.5">
           <Button size="sm" variant="outline" onClick={onView} className="h-8">
             <Eye className="size-3.5" /> View

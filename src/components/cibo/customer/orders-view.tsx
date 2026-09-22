@@ -18,6 +18,10 @@ import {
   Clock,
   ArrowRight,
   LogIn,
+  Leaf,
+  ShoppingBag,
+  TrendingDown,
+  IndianRupee,
 } from "lucide-react";
 import { fmtPrice, fmtTime, fmtDate, timeAgo } from "@/lib/utils";
 import type { Order } from "@/lib/types";
@@ -31,6 +35,13 @@ export function OrdersView() {
     queryFn: () => orderApi.mine(),
     enabled: !!user,
   });
+
+  const { data: statsData } = useQuery({
+    queryKey: ["order-stats"],
+    queryFn: () => orderApi.stats(),
+    enabled: !!user,
+  });
+  const stats = statsData?.stats;
 
   if (!user) {
     return (
@@ -60,6 +71,41 @@ export function OrdersView() {
       <h1 className="font-display text-2xl font-bold text-forest sm:text-3xl">
         Your orders
       </h1>
+
+      {/* Rescue journey summary */}
+      {stats && stats.totalOrders > 0 && (
+        <section className="overflow-hidden rounded-3xl border border-forest/8 bg-gradient-to-br from-forest to-forest-deep p-5 text-ivory cibo-shadow">
+          <div className="absolute" />
+          <div className="flex items-center gap-2">
+            <Leaf className="size-4 text-gold" />
+            <h2 className="text-[11px] font-bold uppercase tracking-wider text-gold">
+              Your rescue journey
+            </h2>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <JourneyStat
+              icon={ShoppingBag}
+              value={String(stats.mealsRescued)}
+              label="Meals rescued"
+            />
+            <JourneyStat
+              icon={IndianRupee}
+              value={fmtPrice(stats.totalSaved)}
+              label="Money saved"
+            />
+            <JourneyStat
+              icon={Leaf}
+              value={`${stats.co2AvoidedKg} kg`}
+              label="CO₂ avoided"
+            />
+            <JourneyStat
+              icon={TrendingDown}
+              value={fmtPrice(stats.avgOrderValue)}
+              label="Avg order"
+            />
+          </div>
+        </section>
+      )}
 
       <Tabs defaultValue="active">
         <TabsList className="w-full justify-start overflow-x-auto">
@@ -197,6 +243,30 @@ function OrderSkeletons() {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function JourneyStat({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: typeof Leaf;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="rounded-2xl bg-ivory/5 p-3 backdrop-blur">
+      <div className="grid size-8 place-items-center rounded-lg bg-gold/20 text-gold">
+        <Icon className="size-4" />
+      </div>
+      <div className="mt-2 font-display text-xl font-extrabold text-ivory">
+        {value}
+      </div>
+      <div className="text-[10px] font-medium uppercase tracking-wide text-ivory/60">
+        {label}
+      </div>
     </div>
   );
 }

@@ -400,3 +400,39 @@ Task: QA, fix distance bug, add recently-viewed + live order ticker, improve foo
 - Demo data refresh: listings expire daily; consider auto-reseed logic
 - Landing page hero could use more parallax/depth effects
 - Mobile bottom nav could show badges (e.g. cart count already shown, could add notification count)
+
+---
+Task ID: 15 (Cron Review Round 3)
+Agent: webDevReview cron
+Task: QA, add provider conversion insights, customer rescue journey, landing hero parallax, styling
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional and stable
+- Rounds 1-2 features verified working (reviews, impact stats, recently-viewed, live ticker, humanized deadlines, distance fix)
+- Dev server healthy, 6 active listings, clean lint
+- Provider analytics charts now properly populated with 7-day historical data
+
+## New Features Added
+1. **Provider listing performance insights (conversion rate)** — each listing card in the provider's Active Listings view now shows a "Rescue conversion" insight bar: rescues/views as a percentage, a gold-to-orange gradient progress bar, and contextual advice ("Excellent conversion" ≥30%, "Good conversion" 10-30%, "Low conversion" <10% with actionable tips). Also added "views" and "rescues" labels to the meta row for clarity.
+2. **Customer rescue journey timeline on orders** — the orders page now displays a dark forest gradient banner at the top showing 4 journey stats: Meals rescued, Money saved, CO₂ avoided, and Avg order value — with gold icon circles on ivory-tinted cards. Uses the existing /api/orders/stats endpoint.
+3. **Landing hero mouse parallax** — the mascot and two floating cards now respond to mouse movement with spring-based parallax (mascot moves ±12px, floating cards move ±18-20px in opposite directions). Added decorative semi-transparent food emojis (🍽️ 🥘 🍛 🥗) floating in the hero background with staggered animation delays.
+
+## Styling Improvements
+1. **Provider listing cards** — richer meta row with labeled "views"/"rescues", plus the new conversion insight panel with gradient bar and advice text
+2. **Customer orders journey banner** — premium dark forest gradient with gold accents, 4-column responsive grid
+3. **Landing hero depth** — parallax layers + decorative food emojis add visual depth and life
+4. **Contextual advice** — conversion rate advice text gives providers actionable insight
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- Provider conversion insights verified: shows "RESCUE CONVERSION" with "Low conversion..." and "Good conversion..." advice ✓
+- Customer rescue journey verified: shows "YOUR RESCUE JOURNEY" with MEALS RESCUED, MONEY SAVED, CO₂ AVOIDED, AVG ORDER ✓
+- Landing hero parallax verified via VLM: mascot + floating cards + decorative emojis visible, "premium layout" ✓
+- No runtime errors in dev log ✓
+
+## Unresolved Issues / Next Phase Recommendations
+- Replace watermarked stock food images with cleaner ones
+- Could add: real-time WebSocket notifications, delivery rider tracking UI, provider mobile app
+- Could add: customer "share rescue" social feature, admin bulk operations, provider schedule/calendar
+- Consider auto-reseed logic for expiring demo data
+- Landing page could add a live stats counter animation on the impact section
