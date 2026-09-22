@@ -322,20 +322,34 @@ export function CheckoutView() {
             >
               {PAYMENTS.map((p) => {
                 const Icon = p.icon;
+                const active = payment === p.id;
+                const colorMap: Record<string, string> = {
+                  UPI: "bg-orange/15 text-orange",
+                  CARD: "bg-forest/10 text-forest",
+                  NETBANKING: "bg-gold/15 text-gold",
+                  WALLET: "bg-success/15 text-success",
+                };
                 return (
                   <label
                     key={p.id}
-                    className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${
-                      payment === p.id
-                        ? "border-forest bg-cream/50"
-                        : "border-forest/10 hover:bg-cream/30"
+                    className={`group relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border p-3.5 transition ${
+                      active
+                        ? "border-orange bg-orange/5 cibo-shadow"
+                        : "border-forest/10 hover:border-gold/40 hover:bg-cream/30"
                     }`}
                   >
-                    <RadioGroupItem value={p.id} />
-                    <Icon className="size-4 text-forest" />
-                    <div>
+                    {active && (
+                      <span className="absolute right-2 top-2 grid size-4 place-items-center rounded-full bg-orange text-white">
+                        <span className="size-1.5 rounded-full bg-white" />
+                      </span>
+                    )}
+                    <RadioGroupItem value={p.id} className="sr-only" />
+                    <div className={`grid size-10 shrink-0 place-items-center rounded-xl ${colorMap[p.id] || "bg-cream text-forest"}`}>
+                      <Icon className="size-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-forest">{p.label}</p>
-                      <p className="text-[11px] text-muted-foreground">{p.desc}</p>
+                      <p className="truncate text-[11px] text-muted-foreground">{p.desc}</p>
                     </div>
                   </label>
                 );

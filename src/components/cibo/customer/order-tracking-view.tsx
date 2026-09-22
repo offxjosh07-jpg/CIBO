@@ -1,6 +1,6 @@
 "use client";
 
-import { useApp } from "@/lib/store";
+import { useApp, useCart } from "@/lib/store";
 import { useAuth } from "@/components/providers";
 import {
   useQuery,
@@ -43,6 +43,7 @@ import {
   Package,
   ChefHat,
   ShoppingBag,
+  RefreshCw,
 } from "lucide-react";
 import { fmtPrice, fmtTime, timeAgo } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -97,6 +98,7 @@ const STATUS_ORDER: Record<OrderStatus, number> = {
 export function OrderTrackingView() {
   const id = useApp((s) => s.activeOrderId);
   const setCustomer = useApp((s) => s.setCustomer);
+  const cartAdd = useCart((s) => s.add);
   const qc = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
@@ -446,6 +448,52 @@ export function OrderTrackingView() {
                   "{order.review.comment}"
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Reorder */}
+          {completed && order.items.length > 0 && (
+            <div className="rounded-2xl border border-gold/30 bg-gradient-to-br from-cream/60 to-ivory/40 p-4">
+              <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-orange">
+                <RefreshCw className="size-3.5" /> Rescue again
+              </p>
+              <p className="mt-1 text-[11px] text-forest/70">
+                Loved this meal? Add the same items to your cart in one tap.
+              </p>
+              <Button
+                variant="rescue"
+                size="sm"
+                className="mt-3 w-full"
+                onClick={() => {
+                  let added = 0;
+                  for (const item of order.items) {
+                    if (item.listingId) {
+                      cartAdd({
+                        listingId: item.listingId,
+                        title: item.title,
+                        image: item.image || "/cibo-logo.svg",
+                        price: item.price,
+                        quantity: item.quantity,
+                        providerId: item.providerId,
+                        providerName: order.provider?.businessName || "Provider",
+                        pickupDeadline: new Date(Date.now() + 2 * 3600 * 1000).toISOString(),
+                        pickupStart: new Date().toISOString(),
+                        fulfillment: "PICKUP",
+                        maxQty: 99,
+                      });
+                      added++;
+                    }
+                  }
+                  if (added > 0) {
+                    toast.success(`Added ${added} item${added > 1 ? "s" : ""} to cart`);
+                    setCustomer("cart");
+                  } else {
+                    toast.error("These listings are no longer available");
+                  }
+                }}
+              >
+                <ShoppingBag className="size-3.5" /> Reorder {order.items.length} item{order.items.length > 1 ? "s" : ""}
+              </Button>
             </div>
           )}
         </aside>

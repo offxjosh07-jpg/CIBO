@@ -477,3 +477,36 @@ Task: QA, add animated counters, recent/trending searches, provider schedule, en
 - Could add: admin bulk operations, provider calendar month view, customer order re-order (one-tap repurchase)
 - Consider auto-reseed logic for expiring demo data
 - Could add landing page "live rescue counter" that updates in real-time
+
+---
+Task ID: 17 (Cron Review Round 5)
+Agent: webDevReview cron
+Task: Add reorder, bulk verification, enhanced payment cards & testimonials; QA blocked by server
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified in prior rounds)
+- Rounds 1-4 features all working (reviews, impact stats, recently-viewed, live ticker, parallax hero, conversion insights, rescue journey, animated counters, recent/trending searches, provider schedule, enhanced categories)
+- Dev server became unresponsive during this round (connection refused, process not running). Auto-restart system did not recover it within the round window.
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors.
+- 6 active listings were present before server went down.
+
+## New Features Added
+1. **Customer one-tap reorder** — completed orders now show a "Rescue again" card with a "Reorder N items" button that adds all order items to the cart in one tap and navigates to the cart. Uses useCart store. Handles items no longer available (listingId may be null for deleted listings, skipped gracefully).
+2. **Admin bulk approve-all** — the verification queue now shows an "Approve all (N)" button (rescue variant, CheckCheck icon) when 2+ providers are pending. Uses Promise.all to verify all providers in parallel, then invalidates the providers query and toasts success.
+
+## Styling Improvements
+1. **Enhanced checkout payment cards** — payment method cards now have: brand-colored icon circles (UPI=orange, CARD=forest, NETBANKING=gold, WALLET=success), larger 10x10 icon tiles, active state with orange border + shadow + white dot indicator in top-right corner, hidden native radio (sr-only) for cleaner look, hover gold border.
+2. **Enhanced landing testimonials** — testimonial cards now have: 5-star rating row (gold stars), gradient brand-colored avatar circles with initials (orange/forest/olive), "Name · Tag" format, decorative gold circle that intensifies on hover, hover lift + shadow-lg, relative positioned content over decorative layer.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep ✓
+- **QA via agent-browser NOT performed** — dev server was down (connection refused) for the entire round and did not auto-recover. Functional testing deferred to next round once server recovers.
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — the Next.js dev process died and was not auto-restarted. The system that runs `bun run dev` needs to detect and restart crashed processes. Next round should verify server is up before QA.
+- QA all round-5 features once server recovers: reorder button on completed orders, payment card styling, testimonial stars, bulk approve-all
+- Replace watermarked stock food images with cleaner ones
+- Could add: real-time WebSocket notifications, delivery rider tracking, customer share-rescue social feature
+- Consider auto-reseed logic for expiring demo data

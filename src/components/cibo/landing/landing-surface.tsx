@@ -794,9 +794,9 @@ function AnimatedCounter({ target, prefix = "", suffix = "" }: { target: number;
 // ---------------- Testimonials ----------------
 function Testimonials() {
   const items = [
-    { name: "Aarav, Student", text: "I get dinner for ₹40 every evening. The biryani is from real wedding caterers — it's genuinely good food.", role: "Hostel resident, Tirunelveli" },
-    { name: "Priya, Caterer", text: "After a 600-plate wedding we used to throw away 40 portions. Now CIBO turns that into revenue and goodwill.", role: "Royal Feast Events" },
-    { name: "Mohan, Cloud Kitchen", text: "Cancelled orders used to hurt. Now I list them on CIBO and they're gone in minutes.", role: "Ganga Cloud Kitchen" },
+    { name: "Aarav", tag: "Student", text: "I get dinner for ₹40 every evening. The biryani is from real wedding caterers — it's genuinely good food.", role: "Hostel resident, Tirunelveli", rating: 5, initials: "AS", color: "bg-orange" },
+    { name: "Priya", tag: "Caterer", text: "After a 600-plate wedding we used to throw away 40 portions. Now CIBO turns that into revenue and goodwill.", role: "Royal Feast Events", rating: 5, initials: "PN", color: "bg-forest" },
+    { name: "Mohan", tag: "Cloud Kitchen", text: "Cancelled orders used to hurt. Now I list them on CIBO and they're gone in minutes.", role: "Ganga Cloud Kitchen", rating: 5, initials: "MD", color: "bg-olive" },
   ];
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
@@ -809,17 +809,27 @@ function Testimonials() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.08 }}
-            className="rounded-3xl border border-forest/8 bg-card p-7 cibo-shadow"
+            className="group relative overflow-hidden rounded-3xl border border-forest/8 bg-card p-7 cibo-shadow transition hover:-translate-y-1 hover:cibo-shadow-lg"
           >
-            <Quote className="size-8 text-gold/40" />
-            <p className="mt-3 text-sm leading-relaxed text-forest/80">"{t.text}"</p>
-            <div className="mt-5 flex items-center gap-3 border-t border-forest/8 pt-4">
-              <div className="grid size-10 place-items-center rounded-full bg-cream font-bold text-forest">
-                {t.name[0]}
+            <div className="absolute -right-6 -top-6 size-24 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <Quote className="size-8 text-gold/40" />
+                <div className="flex gap-0.5">
+                  {Array.from({ length: t.rating }).map((_, s) => (
+                    <Star key={s} className="size-3.5 fill-gold text-gold" />
+                  ))}
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-bold text-forest">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.role}</p>
+              <p className="mt-3 text-sm leading-relaxed text-forest/80">"{t.text}"</p>
+              <div className="mt-5 flex items-center gap-3 border-t border-forest/8 pt-4">
+                <div className={`grid size-11 place-items-center rounded-full ${t.color} font-display text-sm font-bold text-ivory`}>
+                  {t.initials}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-forest">{t.name} <span className="text-muted-foreground font-normal">· {t.tag}</span></p>
+                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                </div>
               </div>
             </div>
           </motion.div>

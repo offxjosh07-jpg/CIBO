@@ -24,6 +24,7 @@ import {
   Phone,
   Mail,
   FileText,
+  CheckCheck,
 } from "lucide-react";
 import { fmtDate, initials } from "@/lib/utils";
 import { PageShell, PageHeader, AdminEmptyState, VerificationPill } from "./shared";
@@ -72,6 +73,29 @@ export function VerificationView() {
       <PageHeader
         title="Verification queue"
         subtitle={`${queue.length} provider${queue.length === 1 ? "" : "s"} awaiting review`}
+        right={
+          queue.length > 1 ? (
+            <Button
+              size="sm"
+              variant="rescue"
+              onClick={() => {
+                Promise.all(
+                  queue.map((p: any) =>
+                    adminApi.verifyProvider(p.id, "VERIFIED")
+                  )
+                ).then(() => {
+                  toast({
+                    title: `Approved ${queue.length} providers`,
+                    description: "All providers in the queue have been verified.",
+                  });
+                  qc.invalidateQueries({ queryKey: ["admin", "providers"] });
+                });
+              }}
+            >
+              <CheckCheck className="size-3.5" /> Approve all ({queue.length})
+            </Button>
+          ) : undefined
+        }
       />
 
       {q.isLoading ? (
