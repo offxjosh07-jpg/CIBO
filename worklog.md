@@ -576,3 +576,33 @@ Task: Add sparklines, enhance ForCustomers stats, verify code
 - Replace watermarked stock food images with cleaner ones
 - Consider auto-reseed logic for expiring demo data
 - Could add: real-time WebSocket notifications, delivery rider tracking
+
+---
+Task ID: 20 (Cron Review Round 9)
+Agent: webDevReview cron
+Task: Add payment method breakdown, enhanced admin empty states
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified rounds 1-4)
+- Rounds 5-8 features on disk and lint-clean
+- **Dev server STILL DOWN** (5th consecutive round — connection refused, auto-restart not recovering)
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors
+
+## New Features Added
+1. **Provider revenue by payment method breakdown** — new panel in the earnings view showing how customers pay (UPI/Card/Net Banking/Wallet). Each method shows: colored dot, label, order count, revenue, percentage, and a progress bar with the method's brand color. Computed from completed orders' payment data. Includes empty state when no payment data exists.
+
+## Styling Improvements
+1. **Enhanced admin empty states** — AdminEmptyState component now has: decorative cibo-grain background pattern, a blurred gold glow behind the mascot, larger 64px mascot, icon badge positioned as an overlay on the mascot (bottom-right with orange ring), all content relatively positioned over the decorative layer. More premium and on-brand.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep ✓
+- **QA via agent-browser NOT performed** — dev server down for 5th consecutive round
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — down since round 5 (5 rounds / ~75+ min). The `bun run dev` process crashes and auto-restart doesn't recover it. Needs infrastructure investigation.
+- QA all features from rounds 5-9 once server recovers
+- Replace watermarked stock food images with cleaner ones
+- Consider auto-reseed logic for expiring demo data
+- Could add: real-time WebSocket notifications, delivery rider tracking, customer wishlist

@@ -139,19 +139,24 @@ export function AdminEmptyState({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
-      <CiboMark size={56} className="opacity-80 animate-float" />
-      {icon && (
-        <div className="mt-1 grid size-11 place-items-center rounded-2xl bg-cream/60 text-forest">
-          {icon}
-        </div>
-      )}
-      <h3 className="font-display text-lg font-bold text-forest">{title}</h3>
+    <div className="relative flex flex-col items-center justify-center gap-3 overflow-hidden px-6 py-14 text-center">
+      {/* Decorative background */}
+      <div className="absolute inset-0 cibo-grain opacity-30" />
+      <div className="absolute left-1/2 top-8 size-40 -translate-x-1/2 rounded-full bg-gold/5 blur-3xl" />
+      <div className="relative">
+        <CiboMark size={64} className="opacity-80 animate-float" />
+        {icon && (
+          <div className="absolute -bottom-1 -right-3 grid size-9 place-items-center rounded-xl bg-orange/15 text-orange shadow-sm ring-2 ring-card">
+            {icon}
+          </div>
+        )}
+      </div>
+      <h3 className="relative font-display text-lg font-bold text-forest">{title}</h3>
       {description && (
-        <p className="max-w-sm text-sm text-muted-foreground">{description}</p>
+        <p className="relative max-w-sm text-sm text-muted-foreground">{description}</p>
       )}
       {actionLabel && onAction && (
-        <Button variant="rescue" size="sm" className="mt-2" onClick={onAction}>
+        <Button variant="rescue" size="sm" className="relative mt-2" onClick={onAction}>
           {actionLabel} <ArrowRight className="size-3.5" />
         </Button>
       )}

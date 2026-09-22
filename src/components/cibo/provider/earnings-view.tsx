@@ -73,6 +73,36 @@ export function EarningsView() {
     (a, b) => b.revenue - a.revenue
   );
 
+  // Payment method breakdown (from completed orders)
+  const paymentMethods = ["UPI", "CARD", "NETBANKING", "WALLET"];
+  const methodLabels: Record<string, string> = {
+    UPI: "UPI",
+    CARD: "Card",
+    NETBANKING: "Net Banking",
+    WALLET: "Wallet",
+  };
+  const methodColors: Record<string, string> = {
+    UPI: "#E48F24",
+    CARD: "#182E20",
+    NETBANKING: "#DFAF66",
+    WALLET: "#2F7A4A",
+  };
+  const byMethod = new Map<string, { count: number; revenue: number }>();
+  for (const pm of paymentMethods) byMethod.set(pm, { count: 0, revenue: 0 });
+  for (const o of orders) {
+    const m = o.paymentMethod;
+    if (byMethod.has(m)) {
+      const prev = byMethod.get(m)!;
+      prev.count++;
+      prev.revenue += o.subtotal;
+    }
+  }
+  const methodRows = Array.from(byMethod.entries())
+    .map(([method, v]) => ({ method, ...v, label: methodLabels[method] || method }))
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.revenue - a.revenue);
+  const totalMethodRevenue = methodRows.reduce((s, r) => s + r.revenue, 0) || 1;
+
   // Last 7 days earnings bar chart
   const chartData = (a?.ordersLast7Days || []).map((d: any) => ({
     date: new Date(d.date).toLocaleDateString("en-IN", { weekday: "short" }),
@@ -259,6 +289,47 @@ export function EarningsView() {
           )}
         </Panel>
       </div>
+
+      {/* Payment method breakdown */}
+      <Panel title="Revenue by payment method" subtitle="How customers are paying you">
+        {methodRows.length === 0 ? (
+          <EmptyState
+            title="No payment data yet"
+            description="Completed orders will show payment method breakdown here."
+            icon={<Wallet className="size-5" />}
+          />
+        ) : (
+          <div className="space-y-3">
+            {methodRows.map((r) => {
+              const pct = Math.round((r.revenue / totalMethodRevenue) * 100);
+              const color = methodColors[r.method] || "#696C4D";
+              return (
+                <div key={r.method}>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="size-2.5 rounded-full" style={{ background: color }} />
+                      <span className="font-semibold text-forest">{r.label}</span>
+                      <span className="text-[11px] text-muted-foreground">
+                        · {r.count} order{r.count !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-forest">{fmtPrice(r.revenue)}</span>
+                      <span className="ml-1.5 text-[11px] text-muted-foreground">{pct}%</span>
+                    </div>
+                  </div>
+                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{ width: `${pct}%`, background: color }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Panel>
 
       <Panel title="Payout details" subtitle="Where we send your money">
         <p className="text-xs text-muted-foreground">
