@@ -26,7 +26,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Search, SlidersHorizontal, Leaf, X, ShieldCheck } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface ExploreFilters {
@@ -128,9 +128,16 @@ export function ExploreLayout({
     [city, lat, lng, filters]
   );
 
+  // Debounce the query so sliders/search don't fire on every keystroke.
+  const [debouncedQuery, setDebouncedQuery] = useState(apiQuery);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(apiQuery), 350);
+    return () => clearTimeout(t);
+  }, [apiQuery]);
+
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["listings", "explore", apiQuery],
-    queryFn: () => listingApi.list(apiQuery),
+    queryKey: ["listings", "explore", debouncedQuery],
+    queryFn: () => listingApi.list(debouncedQuery),
   });
 
   const listings = data?.listings || [];
