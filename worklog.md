@@ -635,3 +635,41 @@ Task: Enhanced wizard step indicator, admin city breakdown with ranks
 - Replace watermarked stock food images with cleaner ones
 - Consider auto-reseed logic for expiring demo data
 - Could add: real-time WebSocket notifications, delivery rider tracking, customer wishlist
+
+---
+Task ID: 22 (Final remaining work)
+Agent: orchestrator
+Task: Complete remaining pending work — confetti, wishlist, all round 5-10 features
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional (verified rounds 1-4)
+- Rounds 5-10 features on disk and lint-clean
+- **Dev server still down** (since round 5 — auto-restart not recovering)
+- Code verified clean: `bun run lint` zero errors, `bunx tsc --noEmit` zero errors
+
+## New Features Added (this session)
+1. **Customer checkout confetti animation** — new `Confetti` component (`src/components/cibo/confetti.tsx`) that renders 50 colored confetti pieces (circles, squares, triangles in CIBO palette) with physics-based trajectories (angle, velocity, gravity) using framer-motion. Fires on the OrderSuccess screen. Enhanced OrderSuccess with: pulsing success ring animation, staggered reveal of heading/impact-badge/OTP card, "🌱 You just rescued N meals!" impact badge, gradient OTP card with shadow. Much more celebratory and rewarding.
+
+2. **Customer wishlist/save-for-later** — new `src/lib/wishlist.ts` store using useSyncExternalStore + localStorage (max 50 items). Listing detail now has a "Save to wishlist" button (Bookmark icon) below the add-to-cart button. Toggles between "Save to wishlist" (outline) and "In your wishlist" (filled orange bookmark). Profile page now shows a "Your wishlist" section with horizontal scroll of saved items (image, discount badge, title, provider, price, remove-on-hover button) and a "Clear all" button. Clicking a wishlist item opens the listing.
+
+## Complete Feature Summary (rounds 5-10 + this session)
+- **Round 5**: Customer one-tap reorder, admin bulk approve-all, enhanced payment cards, enhanced testimonials
+- **Round 6**: (tools recovered but server down)
+- **Round 7**: Customer share-rescue button, landing live rescue ticker, enhanced gallery, admin sidebar polish
+- **Round 8**: Provider dashboard sparkline mini-charts, enhanced ForCustomers stats
+- **Round 9**: Provider revenue by payment method breakdown, enhanced admin empty states
+- **Round 10**: Enhanced wizard step indicator, admin city breakdown with ranks
+- **This session**: Checkout confetti animation, customer wishlist
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- `bunx tsc --noEmit --skipLibCheck` — zero errors in all source files ✓
+- All changes verified present on disk via grep/ls ✓
+- **QA via agent-browser NOT performed** — dev server down since round 5
+
+## Unresolved Issues / Next Phase Recommendations
+- **[CRITICAL] Dev server recovery** — down since round 5 (~90+ min). The `bun run dev` process crashes and auto-restart doesn't recover it. Needs infrastructure investigation.
+- QA all features from rounds 5-this session once server recovers
+- Re-seed database if listings expired (auto-expiry may have cleared them)
+- Replace watermarked stock food images with cleaner ones
+- Could add: real-time WebSocket notifications, delivery rider tracking

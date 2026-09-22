@@ -48,6 +48,7 @@ import {
   PackageCheck,
   Share2,
   Check,
+  Bookmark,
 } from "lucide-react";
 import {
   cn,
@@ -59,6 +60,7 @@ import {
 import { useState, useEffect } from "react";
 import type { FoodListing } from "@/lib/types";
 import { addRecentlyViewed } from "@/lib/recently-viewed";
+import { useWishlist } from "@/lib/wishlist";
 
 export function ListingView() {
   const id = useApp((s) => s.activeListingId);
@@ -67,6 +69,7 @@ export function ListingView() {
   const lng = useApp((s) => s.lng);
   const add = useCart((s) => s.add);
   const qc = useQueryClient();
+  const wishlist = useWishlist();
 
   const [qty, setQty] = useState(1);
   const [reportOpen, setReportOpen] = useState(false);
@@ -343,6 +346,37 @@ export function ListingView() {
                   : "Pickup closed"
                 : `Add to cart · ${fmtPrice(listing.ciboPrice * qty)}`}
             </Button>
+            {/* Wishlist toggle */}
+            {!disabled && (
+              <Button
+                variant="outline"
+                size="lg"
+                className="mt-2 w-full"
+                onClick={() => {
+                  const inList = wishlist.has(listing.id);
+                  if (inList) {
+                    wishlist.remove(listing.id);
+                    toast.success("Removed from wishlist");
+                  } else {
+                    wishlist.add({
+                      id: listing.id,
+                      title: listing.title,
+                      image: listing.images?.[0] || "/cibo-logo.svg",
+                      ciboPrice: listing.ciboPrice,
+                      originalPrice: listing.originalPrice,
+                      providerName: listing.provider?.businessName || "Provider",
+                      city: listing.city,
+                    });
+                    toast.success("Saved to wishlist", {
+                      description: "Find it later in your profile",
+                    });
+                  }
+                }}
+              >
+                <Bookmark className={cn("size-4", wishlist.has(listing.id) && "fill-orange text-orange")} />
+                {wishlist.has(listing.id) ? "In your wishlist" : "Save to wishlist"}
+              </Button>
+            )}
             {disabled && (
               <p className="mt-2 text-center text-[11px] text-danger">
                 This rescue is no longer available for booking.

@@ -4,6 +4,7 @@ import { useApp } from "@/lib/store";
 import { useAuth } from "@/components/providers";
 import { useQuery } from "@tanstack/react-query";
 import { orderApi } from "@/lib/api-client";
+import { useWishlist } from "@/lib/wishlist";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
@@ -30,9 +31,11 @@ import {
   ShoppingBag,
   IndianRupee,
   TrendingDown,
+  Bookmark,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import { cn, initials, fmtPrice } from "@/lib/utils";
+import { cn, initials, fmtPrice, discountPct } from "@/lib/utils";
 
 export function ProfileView() {
   const { user, logout } = useAuth();
@@ -51,6 +54,9 @@ export function ProfileView() {
     enabled: !!user,
   });
   const stats = statsData?.stats;
+
+  // Wishlist
+  const wishlist = useWishlist();
 
   if (!user) {
     return (
@@ -195,6 +201,80 @@ export function ProfileView() {
               </div>
             </div>
           )}
+        </section>
+      )}
+
+      {/* Wishlist */}
+      {wishlist.count > 0 && (
+        <section className="overflow-hidden rounded-3xl border border-forest/8 bg-card p-5 cibo-shadow">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bookmark className="size-4 fill-orange text-orange" />
+              <h3 className="font-display text-sm font-bold uppercase tracking-wide text-forest">
+                Your wishlist
+              </h3>
+              <span className="rounded-full bg-cream px-2 py-0.5 text-[10px] font-bold text-forest">
+                {wishlist.count}
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                wishlist.clear();
+                toast.success("Wishlist cleared");
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground transition hover:text-danger"
+            >
+              <Trash2 className="size-3" /> Clear all
+            </button>
+          </div>
+          <div className="mt-3 flex gap-2.5 overflow-x-auto pb-2 scrollbar-cibo">
+            {wishlist.items.map((item) => {
+              const pct = discountPct(item.originalPrice, item.ciboPrice);
+              return (
+                <div
+                  key={item.id}
+                  className="group relative flex w-36 shrink-0 flex-col overflow-hidden rounded-2xl border border-forest/8 bg-cream/20"
+                >
+                  <button
+                    onClick={() => useApp.getState().openListing(item.id)}
+                    className="relative aspect-[4/3] overflow-hidden"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="size-full object-cover transition group-hover:scale-105"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/cibo-logo.svg";
+                      }}
+                    />
+                    {pct > 0 && (
+                      <span className="absolute left-1.5 top-1.5 rounded-full bg-forest px-1.5 py-0.5 text-[9px] font-extrabold text-gold">
+                        {pct}% OFF
+                      </span>
+                    )}
+                  </button>
+                  <div className="flex flex-1 flex-col gap-0.5 p-2">
+                    <p className="line-clamp-1 text-[11px] font-bold text-forest">{item.title}</p>
+                    <p className="line-clamp-1 text-[9px] text-muted-foreground">{item.providerName}</p>
+                    <div className="mt-auto flex items-baseline gap-1">
+                      <span className="font-display text-xs font-extrabold text-forest">{fmtPrice(item.ciboPrice)}</span>
+                      <span className="text-[9px] text-muted-foreground line-through">{fmtPrice(item.originalPrice)}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      wishlist.remove(item.id);
+                      toast.success("Removed from wishlist");
+                    }}
+                    className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-card/90 text-forest opacity-0 transition hover:bg-danger hover:text-white group-hover:opacity-100"
+                    aria-label="Remove from wishlist"
+                  >
+                    <Trash2 className="size-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 

@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FoodImage, PageShell } from "./shared";
+import { Confetti } from "../confetti";
 import { toast } from "sonner";
 import {
   CreditCard,
@@ -563,44 +564,86 @@ function Row({ label, value }: { label: string; value: string }) {
 function OrderSuccess({ order }: { order: Order }) {
   return (
     <PageShell>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="mx-auto max-w-md py-10 text-center"
-      >
+      <div className="relative">
+        <Confetti count={50} />
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-          className="mx-auto grid size-20 place-items-center rounded-full bg-success/15 text-success"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative mx-auto max-w-md py-10 text-center"
         >
-          <CheckCircle2 className="size-10" />
-        </motion.div>
-        <h1 className="mt-4 font-display text-2xl font-bold text-forest">
-          Order placed!
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Order number{" "}
-          <span className="font-bold text-forest">{order.orderNumber}</span>
-        </p>
-
-        <div className="mt-6 rounded-3xl border border-gold/30 bg-cream/40 p-6">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Show this OTP at pickup
-          </p>
-          <p className="mt-2 font-display text-5xl font-extrabold tracking-[0.4em] text-forest">
-            {order.pickupOtp || "----"}
-          </p>
-          <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs text-forest">
-            <MapPin className="size-3 text-orange" />
-            {order.provider?.businessName || "Provider"}
+          {/* Success check with pulse ring */}
+          <div className="relative mx-auto w-fit">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+              className="relative grid size-20 place-items-center rounded-full bg-success/15 text-success"
+            >
+              <CheckCircle2 className="size-10" />
+              {/* Pulsing ring */}
+              <motion.div
+                initial={{ scale: 1, opacity: 0.6 }}
+                animate={{ scale: 1.8, opacity: 0 }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+                className="absolute inset-0 rounded-full bg-success/30"
+              />
+            </motion.div>
           </div>
-        </div>
-        <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
-          <Loader2 className="size-3 animate-spin" /> Redirecting to order
-          tracking…
-        </p>
-      </motion.div>
+
+          {/* Heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mt-4 font-display text-2xl font-bold text-forest"
+          >
+            Order placed! 🎉
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+            className="mt-1 text-sm text-muted-foreground"
+          >
+            Order number{" "}
+            <span className="font-bold text-forest">{order.orderNumber}</span>
+          </motion.p>
+
+          {/* Impact badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-bold text-success"
+          >
+            🌱 You just rescued {order.items.reduce((s, i) => s + i.quantity, 0)} meal{order.items.reduce((s, i) => s + i.quantity, 0) > 1 ? "s" : ""}!
+          </motion.div>
+
+          {/* OTP card */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="mt-6 overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-cream/60 to-ivory/40 p-6 cibo-shadow"
+          >
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Show this OTP at pickup
+            </p>
+            <p className="mt-2 font-display text-5xl font-extrabold tracking-[0.4em] text-forest">
+              {order.pickupOtp || "----"}
+            </p>
+            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1 text-xs text-forest">
+              <MapPin className="size-3 text-orange" />
+              {order.provider?.businessName || "Provider"}
+            </div>
+          </motion.div>
+
+          <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted-foreground">
+            <Loader2 className="size-3 animate-spin" /> Redirecting to order
+            tracking…
+          </p>
+        </motion.div>
+      </div>
     </PageShell>
   );
 }
