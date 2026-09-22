@@ -31,6 +31,7 @@ import {
   Store,
   ChevronRight,
   Bell,
+  Calendar,
 } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -44,6 +45,7 @@ import { OrdersView } from "./orders-view";
 import { InventoryView } from "./inventory-view";
 import { EarningsView } from "./earnings-view";
 import { AnalyticsView } from "./analytics-view";
+import { ScheduleView } from "./schedule-view";
 import { ProfileView } from "./profile-view";
 import { VerificationView } from "./verification-view";
 import { SupportView } from "./support-view";
@@ -53,6 +55,7 @@ const NAV: { view: ProviderView; label: string; icon: typeof LayoutDashboard; gr
   { view: "create", label: "Create Listing", icon: PlusCircle },
   { view: "listings", label: "Active Listings", icon: Package },
   { view: "orders", label: "Orders", icon: ClipboardList },
+  { view: "schedule", label: "Schedule", icon: Calendar },
   { view: "inventory", label: "Inventory", icon: Boxes },
   { view: "earnings", label: "Earnings", icon: Wallet },
   { view: "analytics", label: "Analytics", icon: BarChart3 },
@@ -66,6 +69,7 @@ const TITLES: Record<ProviderView, string> = {
   create: "Create Listing",
   listings: "Active Listings",
   orders: "Orders",
+  schedule: "Pickup Schedule",
   inventory: "Inventory",
   earnings: "Earnings",
   analytics: "Analytics",
@@ -131,6 +135,7 @@ export function ProviderApp() {
               {providerView === "listings" && <ListingsView />}
               {providerView === "orders" && <OrdersView />}
               {providerView === "inventory" && <InventoryView />}
+              {providerView === "schedule" && <ScheduleView />}
               {providerView === "earnings" && <EarningsView />}
               {providerView === "analytics" && <AnalyticsView />}
               {providerView === "profile" && <ProfileView />}

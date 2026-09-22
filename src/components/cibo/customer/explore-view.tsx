@@ -69,12 +69,14 @@ export function ExploreLayout({
   subtitle,
   fixedFilters,
   hideSearchInput,
+  onSearchCommit,
 }: {
   initialQ?: string;
   title: string;
   subtitle?: string;
   fixedFilters?: Partial<ExploreFilters>;
   hideSearchInput?: boolean;
+  onSearchCommit?: (q: string) => void;
 }) {
   const city = useApp((s) => s.city);
   const lat = useApp((s) => s.lat);
@@ -171,6 +173,11 @@ export function ExploreLayout({
             onChange={(e) => {
               update({ q: e.target.value });
               setSearch(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && onSearchCommit && filters.q && filters.q.trim().length >= 2) {
+                onSearchCommit(filters.q.trim());
+              }
             }}
             placeholder="Search dishes, providers, cuisines…"
             className="h-12 rounded-2xl border-forest/15 bg-card pl-10 pr-10 text-sm"

@@ -316,19 +316,33 @@ function HeroCard({
 }
 
 function CategoryPill({ cat, onClick }: { cat: FoodCategory; onClick: () => void }) {
+  // Color theme by food type
+  const theme =
+    cat.foodType === "VEG"
+      ? "from-success/15 to-success/5 border-success/20"
+      : cat.foodType === "NON_VEG"
+      ? "from-danger/15 to-danger/5 border-danger/20"
+      : "from-gold/15 to-cream/40 border-gold/20";
+  const iconBg =
+    cat.foodType === "VEG"
+      ? "bg-success/15 text-success"
+      : cat.foodType === "NON_VEG"
+      ? "bg-danger/15 text-danger"
+      : "bg-cream text-forest";
+
   return (
     <button
       onClick={onClick}
-      className="group flex shrink-0 flex-col items-center gap-2 rounded-2xl border border-forest/10 bg-card p-3 transition hover:border-gold hover:bg-cream/50 cibo-shadow"
+      className={`group relative flex w-20 shrink-0 flex-col items-center gap-2 overflow-hidden rounded-2xl border bg-gradient-to-br p-3 transition hover:-translate-y-1 hover:cibo-shadow-lg ${theme}`}
     >
-      <div className="grid size-12 place-items-center rounded-xl bg-cream text-2xl transition group-hover:scale-110">
+      <div className={`grid size-12 place-items-center rounded-xl ${iconBg} text-2xl transition group-hover:scale-110 group-hover:rotate-3`}>
         {cat.emoji ? (
           <span aria-hidden>{cat.emoji}</span>
         ) : (
-          <Leaf className="size-6 text-forest" />
+          <Leaf className="size-6" />
         )}
       </div>
-      <span className="text-[11px] font-semibold text-forest">{cat.name}</span>
+      <span className="text-[11px] font-bold text-forest">{cat.name}</span>
     </button>
   );
 }

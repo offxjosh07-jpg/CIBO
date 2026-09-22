@@ -29,6 +29,7 @@ export type ProviderView =
   | "inventory"
   | "earnings"
   | "analytics"
+  | "schedule"
   | "profile"
   | "verification"
   | "support";

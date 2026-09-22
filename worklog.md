@@ -436,3 +436,44 @@ Task: QA, add provider conversion insights, customer rescue journey, landing her
 - Could add: customer "share rescue" social feature, admin bulk operations, provider schedule/calendar
 - Consider auto-reseed logic for expiring demo data
 - Landing page could add a live stats counter animation on the impact section
+
+---
+Task ID: 16 (Cron Review Round 4)
+Agent: webDevReview cron
+Task: QA, add animated counters, recent/trending searches, provider schedule, enhanced categories
+
+## Current Project Status Assessment
+- All 4 surfaces fully functional and stable
+- Rounds 1-3 features verified working (reviews, impact stats, recently-viewed, live ticker, parallax hero, conversion insights, rescue journey)
+- Dev server healthy, 6 active listings, clean lint
+- Provider analytics charts properly populated with 7-day data
+
+## New Features Added
+1. **Animated impact counters on landing** — the Impact section now animates numbers from 0 to their target value when scrolled into view (using framer-motion useInView + animate + useTransform). Counts up over 1.8s with easeOut. Handles integers (12,480 → "12,480") and decimals (6.2 → "₹6.2L", 4.6 → "4.6★"). Each stat card also has a hover glow effect and decorative gold circle.
+2. **Customer search with recent + trending searches** — new search-view.tsx with localStorage-backed recent searches (useSyncExternalStore pattern) and trending searches chips (biryani, veg meals, pizza, bakery, dosa, wedding, cakes, snacks). Recent searches appear when you press Enter on a search. Both chip types are clickable to filter results. Includes a "Clear" button for recent searches.
+3. **Provider weekly pickup schedule** — new "Schedule" nav item + schedule-view.tsx showing the provider's upcoming pickups organized by day in a vertical timeline. Each day group shows: a date badge (today=today/tomorrow/date), pickup count + portions + potential revenue summary, and individual pickup cards with time block, listing title, status, portions, price, discount, city, event type, and deadline chip. Stats cards at top: Scheduled pickups, Total portions, Potential revenue. Connected border-l-2 timeline connector.
+
+## Styling Improvements
+1. **Enhanced category cards** — category pills now use food-type-coded gradient backgrounds (veg=success green, non-veg=danger red, both=gold/cream), icon backgrounds color-matched, hover lift + rotate-3 micro-interaction, bold labels
+2. **Impact section** — premium dark forest cards with gold accents, hover glow, decorative circles, animated counters
+3. **Search chips** — recent searches use neutral forest borders, trending use orange-tinted borders with Flame icon
+4. **Schedule timeline** — date badges (today=orange filled), border-l-2 connector, time blocks with forest/gold icons
+
+## Bugs Fixed
+1. **StatCard prop mismatch in schedule-view** — used `color` prop instead of `tone`, and passed component instead of ReactNode. Fixed to use correct `tone` prop and JSX icon elements.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- Animated counters verified: show 12,480 / 186 / 4 / ₹6.2L / 2,140 kg / 4.6★ ✓
+- Trending searches verified: 8 chips (biryani, veg meals, pizza, bakery, dosa, wedding, cakes, snacks) ✓
+- Clicking biryani chip filters to biryani results ✓
+- Provider schedule verified: shows "Pickup Schedule" with 3 stat cards, "Today" timeline with 2 pickups (Wedding Chicken Biryani 7:57am-12:27pm, Veg Meals 8:07am-10:27am), portions, prices, deadline chips ✓
+- Enhanced category cards render with food-type colors ✓
+- No runtime errors (one transient Fast Refresh warning from earlier prop mismatch, now resolved) ✓
+
+## Unresolved Issues / Next Phase Recommendations
+- Replace watermarked stock food images with cleaner ones
+- Could add: real-time WebSocket notifications, delivery rider tracking, customer "share rescue" social feature
+- Could add: admin bulk operations, provider calendar month view, customer order re-order (one-tap repurchase)
+- Consider auto-reseed logic for expiring demo data
+- Could add landing page "live rescue counter" that updates in real-time

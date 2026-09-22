@@ -24,9 +24,9 @@ import {
   X,
   Quote,
 } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useInView, animate } from "framer-motion";
 
 const CITIES = ["Tirunelveli", "Nagercoil", "Madurai", "Chennai"];
 
@@ -724,12 +724,12 @@ function FoodSafety() {
 // ---------------- Impact ----------------
 function Impact() {
   const stats = [
-    { value: "12,480", label: "Meals rescued", icon: Heart },
-    { value: "186", label: "Food providers", icon: Store },
-    { value: "4", label: "Active cities", icon: MapPin },
-    { value: "₹6.2L", label: "Customer savings", icon: Sparkles },
-    { value: "2,140 kg", label: "Food waste avoided", icon: Leaf },
-    { value: "4.6★", label: "Avg provider rating", icon: Star },
+    { target: 12480, label: "Meals rescued", icon: Heart, prefix: "", suffix: "" },
+    { target: 186, label: "Food providers", icon: Store, prefix: "", suffix: "" },
+    { target: 4, label: "Active cities", icon: MapPin, prefix: "", suffix: "" },
+    { target: 6.2, label: "Customer savings", icon: Sparkles, prefix: "₹", suffix: "L" },
+    { target: 2140, label: "Food waste avoided", icon: Leaf, prefix: "", suffix: " kg" },
+    { target: 4.6, label: "Avg provider rating", icon: Star, prefix: "", suffix: "★" },
   ];
   return (
     <section id="impact" className="bg-forest py-16 text-ivory lg:py-24">
@@ -746,19 +746,49 @@ function Impact() {
           </p>
         </div>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-3xl border border-ivory/10 bg-forest-deep/40 p-6 backdrop-blur">
-              <div className="flex items-center justify-between">
-                <span className="font-display text-4xl font-extrabold text-gold">{s.value}</span>
-                <s.icon className="size-6 text-ivory/40" />
+          {stats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="group relative overflow-hidden rounded-3xl border border-ivory/10 bg-forest-deep/40 p-6 backdrop-blur transition hover:border-gold/30"
+            >
+              <div className="absolute -right-4 -top-4 size-24 rounded-full bg-gold/5 transition group-hover:bg-gold/10" />
+              <div className="relative flex items-center justify-between">
+                <span className="font-display text-4xl font-extrabold text-gold">
+                  <AnimatedCounter target={s.target} prefix={s.prefix} suffix={s.suffix} />
+                </span>
+                <s.icon className="size-6 text-ivory/40 transition group-hover:text-gold/60" />
               </div>
-              <p className="mt-2 text-sm text-ivory/70">{s.label}</p>
-            </div>
+              <p className="relative mt-2 text-sm text-ivory/70">{s.label}</p>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
+}
+
+function AnimatedCounter({ target, prefix = "", suffix = "" }: { target: number; prefix?: string; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) => {
+    const isDecimal = !Number.isInteger(target);
+    const display = isDecimal ? v.toFixed(1) : Math.round(v).toLocaleString("en-IN");
+    return `${prefix}${display}${suffix}`;
+  });
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, target, { duration: 1.8, ease: "easeOut" });
+      return controls.stop;
+    }
+  }, [inView, target, count]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
 }
 
 // ---------------- Testimonials ----------------
