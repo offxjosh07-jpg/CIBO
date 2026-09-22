@@ -360,3 +360,43 @@ Unresolved/Next-phase recommendations:
 - The webDevReview cron will continue improving styling and adding features every 15 min
 - Potential next features: real payment gateway integration, maps, push notifications, delivery rider system, provider mobile app
 - Demo data expires daily; the cron or a re-seed will refresh it
+
+---
+Task ID: 14 (Cron Review Round 2)
+Agent: webDevReview cron
+Task: QA, fix distance bug, add recently-viewed + live order ticker, improve food card hover
+
+## Current Project Status Assessment
+- All 4 surfaces (landing/auth/customer/provider/admin) fully functional
+- Round 1 features verified working: provider reviews on listing detail, customer rescue impact stats, humanized deadline chips, 7-day historical orders
+- Dev server healthy, 6 active listings, stats endpoint fixed and returning proper data
+- Clean lint maintained throughout
+
+## Bugs Found & Fixed
+1. **Listing detail showed "0.0 km" distance** — the /api/listings/[id] endpoint didn't compute distance from user location. FIXED: added lat/lng query param parsing + haversineKm distance computation. Also updated listingApi.get() client to accept lat/lng and listing-view to pass them. Now shows correct distance (e.g. "1.15 km").
+2. **recently-viewed.ts lint error** — used setState in effect (react-hooks/set-state-in-effect rule). FIXED: rewrote with useSyncExternalStore (the proper React pattern for external stores) with snapshot caching to avoid re-parsing.
+
+## New Features Added
+1. **Recently-viewed listings on customer home** — new /lib/recently-viewed.ts module using localStorage + useSyncExternalStore. When a customer opens a listing, it's added to their recently-viewed history. The home page now shows a "Recently viewed" horizontal scroll section (between Best Deals and CTA) with mini food cards showing image, discount badge, title, provider, and price. Includes a "Clear" button. Persists across sessions.
+2. **Admin live order ticker** — new LiveOrderTicker component on the admin overview, showing the 8 most recent orders in a horizontally scrolling band with: animated "live" pulse dot, "LIVE ORDERS · real-time feed · scroll →" header, order cards (order number, status badge with color coding, customer name, provider, total), right-edge fade gradient to hint scrollability. Dark forest background matches admin sidebar.
+
+## Styling Improvements
+1. **Food card hover "View details" overlay** — slides up from the bottom of the food image on hover, with a cream pill "View details →" button. Adds tactile feedback and improves discoverability.
+2. **Admin ticker fade gradient** — right-edge gradient fade from forest to transparent hints at horizontal scrollability.
+3. **Admin ticker scroll hint** — "scroll →" text in the header.
+4. **DeadlineChip 3-tier urgency** (from round 1, verified working) — danger ≤30m, orange 31-90m, gold >90m.
+
+## Verification Results
+- `bun run lint` — zero errors, zero warnings ✓
+- Recently-viewed section verified: shows "Veg Meals" card with 58% OFF badge, title, provider, prices after viewing a listing ✓
+- Admin live order ticker verified: shows CIBO-2026-000120 (READY), 000121 (CONFIRMED), 000122 (COMPLETED), 000200, 000211, etc. with customer names, providers, totals ✓
+- Listing distance fix verified: shows "1.15 km" instead of "0.0 km" ✓
+- Stats endpoint verified: returns totalOrders:9, completedOrders:7, totalSpent:1325, totalSaved:1770, mealsRescued:20, co2AvoidedKg:8, topProviders with order counts ✓
+- Reviews section verified: shows 5.0 average, 2 reviews, distribution bars, review cards with customer names and comments ✓
+
+## Unresolved Issues / Next Phase Recommendations
+- Some food images have watermarks (shutterstock) — could be replaced with cleaner stock photos in a future round
+- Could add: provider listing performance insights (views→conversion rate), customer order history timeline, admin real-time WebSocket notifications
+- Demo data refresh: listings expire daily; consider auto-reseed logic
+- Landing page hero could use more parallax/depth effects
+- Mobile bottom nav could show badges (e.g. cart count already shown, could add notification count)

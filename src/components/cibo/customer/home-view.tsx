@@ -15,8 +15,12 @@ import {
   Leaf,
   PartyPopper,
   TrendingUp,
+  Clock,
+  X,
 } from "lucide-react";
 import type { FoodCategory } from "@/lib/types";
+import { useRecentlyViewed } from "@/lib/recently-viewed";
+import { fmtPrice, discountPct } from "@/lib/utils";
 
 export function HomeView() {
   const city = useApp((s) => s.city);
@@ -46,6 +50,8 @@ export function HomeView() {
     queryKey: ["listings", "home-deals", { city }],
     queryFn: () => listingApi.list({ sort: "discount", limit: 4, city }),
   });
+
+  const { items: recentItems, clear: clearRecent } = useRecentlyViewed();
 
   const cats = catData?.categories || [];
 
@@ -181,6 +187,62 @@ export function HomeView() {
           />
         )}
       </section>
+
+      {/* Recently viewed */}
+      {recentItems.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock className="size-4 text-gold" />
+              <h2 className="font-display text-lg font-bold text-forest sm:text-xl">
+                Recently viewed
+              </h2>
+            </div>
+            <button
+              onClick={clearRecent}
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition hover:text-danger"
+            >
+              <X className="size-3" /> Clear
+            </button>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-cibo">
+            {recentItems.map((item) => {
+              const pct = discountPct(item.originalPrice, item.ciboPrice);
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => useApp.getState().openListing(item.id)}
+                  className="group flex w-44 shrink-0 flex-col overflow-hidden rounded-2xl border border-forest/8 bg-card cibo-shadow transition hover:-translate-y-0.5 hover:cibo-shadow-lg"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="size-full object-cover transition group-hover:scale-105"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/cibo-logo.svg";
+                      }}
+                    />
+                    {pct > 0 && (
+                      <span className="absolute left-2 top-2 rounded-full bg-forest px-1.5 py-0.5 text-[9px] font-extrabold text-gold">
+                        {pct}% OFF
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 p-2.5">
+                    <p className="line-clamp-1 text-xs font-bold text-forest">{item.title}</p>
+                    <p className="line-clamp-1 text-[10px] text-muted-foreground">{item.providerName}</p>
+                    <div className="mt-auto flex items-baseline gap-1">
+                      <span className="font-display text-sm font-extrabold text-forest">{fmtPrice(item.ciboPrice)}</span>
+                      <span className="text-[10px] text-muted-foreground line-through">{fmtPrice(item.originalPrice)}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* CTA strip */}
       <section className="rounded-3xl bg-forest p-6 text-ivory sm:p-8">

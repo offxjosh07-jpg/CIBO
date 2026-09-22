@@ -54,8 +54,9 @@ import {
   discountPct,
   deadlineLabel,
 } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FoodListing } from "@/lib/types";
+import { addRecentlyViewed } from "@/lib/recently-viewed";
 
 export function ListingView() {
   const id = useApp((s) => s.activeListingId);
@@ -70,7 +71,7 @@ export function ListingView() {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["listing", id, lat, lng],
-    queryFn: () => listingApi.get(id!),
+    queryFn: () => listingApi.get(id!, lat, lng),
     enabled: !!id,
   });
 
@@ -124,6 +125,11 @@ export function ListingView() {
   });
   const reviews = reviewsData?.reviews || [];
   const reviewSummary = reviewsData?.summary;
+
+  // Track recently viewed
+  useEffect(() => {
+    if (listing) addRecentlyViewed(listing);
+  }, [listing?.id]);
 
   if (isLoading) return <ListingSkeleton onBack={() => setCustomer("home")} />;
   if (isError || !listing)

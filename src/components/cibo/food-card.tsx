@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Heart, MapPin, Clock, ShoppingBag, Star } from "lucide-react";
+import { Heart, MapPin, Clock, ShoppingBag, Star, ArrowRight } from "lucide-react";
 import type { FoodListing } from "@/lib/types";
 import { VegBadge, HalalBadge, RescueBadge, DiscountTag, DeadlineChip } from "./badges";
 import { useCart, useApp } from "@/lib/store";
@@ -78,6 +78,14 @@ export function FoodCard({ listing, className }: { listing: FoodListing; classNa
             </span>
           )}
         </div>
+        {/* Hover "view details" overlay */}
+        {!disabled && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center pb-3 transition-transform duration-300 group-hover:translate-y-0">
+            <span className="inline-flex items-center gap-1 rounded-full bg-card/95 px-3 py-1.5 text-[11px] font-bold text-forest shadow-md backdrop-blur">
+              View details <ArrowRight className="size-3 text-orange" />
+            </span>
+          </div>
+        )}
         <button
           aria-label="Save to favorites"
           onClick={(e) => {

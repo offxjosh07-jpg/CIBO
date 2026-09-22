@@ -94,7 +94,13 @@ export const listingApi = {
     });
     return api.get<{ listings: FoodListing[]; total: number }>(`/api/listings?${p.toString()}`);
   },
-  get: (id: string) => api.get<{ listing: FoodListing }>(`/api/listings/${id}`),
+  get: (id: string, lat?: number, lng?: number) => {
+    const p = new URLSearchParams();
+    if (lat != null) p.set("lat", String(lat));
+    if (lng != null) p.set("lng", String(lng));
+    const q = p.toString();
+    return api.get<{ listing: FoodListing }>(`/api/listings/${id}${q ? `?${q}` : ""}`);
+  },
   create: (data: Record<string, unknown>) => api.post<{ listing: FoodListing }>("/api/provider/listings", data),
   update: (id: string, data: Record<string, unknown>) => api.patch<{ listing: FoodListing }>(`/api/provider/listings/${id}`, data),
   mine: () => api.get<{ listings: FoodListing[] }>("/api/provider/listings"),

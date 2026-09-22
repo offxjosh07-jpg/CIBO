@@ -145,6 +145,11 @@ export function OverviewView() {
         </button>
       </div>
 
+      {/* Live order ticker */}
+      {orders.length > 0 && (
+        <LiveOrderTicker orders={orders} />
+      )}
+
       {/* KPI cards */}
       {ovQ.isLoading ? (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
@@ -477,5 +482,72 @@ export function OverviewView() {
         Last updated {fmtDateTime(new Date())} · CIBO Admin · Good Food, Brighter Tomorrow
       </p>
     </PageShell>
+  );
+}
+
+function LiveOrderTicker({ orders }: { orders: any[] }) {
+  // Show the 8 most recent orders in a horizontally scrolling ticker
+  const recent = [...orders]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
+
+  const statusColors: Record<string, string> = {
+    PLACED: "bg-gold/20 text-gold",
+    CONFIRMED: "bg-success/15 text-success",
+    READY: "bg-orange/15 text-orange",
+    PICKED_UP: "bg-orange/20 text-orange",
+    COMPLETED: "bg-success/20 text-success",
+    CANCELLED: "bg-danger/15 text-danger",
+    REFUNDED: "bg-danger/15 text-danger",
+  };
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-forest/8 bg-forest cibo-shadow">
+      <div className="flex items-center gap-2 border-b border-ivory/10 px-4 py-2">
+        <span className="relative flex size-2">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-orange opacity-75" />
+          <span className="relative inline-flex size-2 rounded-full bg-orange" />
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-gold">
+          Live orders
+        </span>
+        <span className="text-[10px] text-ivory/50">· real-time feed · scroll →</span>
+      </div>
+      <div className="relative">
+        <div className="flex gap-2 overflow-x-auto p-2 scrollbar-cibo">
+          {recent.map((o) => {
+            const cls = statusColors[o.status] || "bg-ivory/10 text-ivory/80";
+            return (
+              <div
+                key={o.id}
+                className="flex min-w-[180px] shrink-0 flex-col gap-1 rounded-xl bg-ivory/5 px-3 py-2 backdrop-blur"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-[10px] font-bold text-gold">
+                    {o.orderNumber}
+                  </span>
+                  <span className={`rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase ${cls}`}>
+                    {o.status}
+                  </span>
+                </div>
+                <p className="truncate text-[11px] font-medium text-ivory/90">
+                  {o.customer?.name || "Customer"}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-ivory/50">
+                    {o.provider?.businessName?.slice(0, 14) || "Provider"}
+                  </span>
+                  <span className="font-display text-xs font-bold text-gold">
+                    {fmtPrice(o.total)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* Right fade gradient to hint scrollability */}
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-forest to-transparent" />
+      </div>
+    </div>
   );
 }
